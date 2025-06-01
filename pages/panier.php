@@ -3,6 +3,7 @@ session_start();
 include 'C:\xampp\htdocs\bellavista\includes\header.php'; 
 ?>
 
+
 <section class="panier-section">
     <div class="container">
         <h1 class="section-title">PANIER</h1>
@@ -157,23 +158,33 @@ function removeFromCart(index) {
 }
 
 function clearCart() {
-    // Clear all cart data
-    localStorage.removeItem('cart');
-    localStorage.removeItem('cartCount');
-    localStorage.removeItem('cartTotal');
+    // Show confirmation dialog
+    const confirmed = confirm("Are you sure you want to clear your cart? This cannot be undone.");
     
-    // Update header
-    document.querySelector('.cart-count').textContent = '0';
-    document.querySelector('.cart-prix').textContent = '0 DNT';
-    
-    // Reload cart items
-    loadCartItems();
-    
-    // Show confirmation
-    alert('Cart cleared successfully!');
-    
-    // CORRECTION : Ne pas appeler updateCartSession() ici
-    // On synchronise uniquement au moment du checkout
+    if (confirmed) {
+        // Clear all cart data
+        localStorage.removeItem('cart');
+        localStorage.removeItem('cartCount');
+        localStorage.removeItem('cartTotal');
+        
+        // Update header
+        document.querySelector('.cart-count').textContent = '0';
+        document.querySelector('.cart-prix').textContent = '0 DNT';
+        
+        // Reload cart items
+        loadCartItems();
+        
+        // Show visual feedback
+        const btn = document.getElementById('clearCartBtn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Cart Cleared!';
+        btn.style.backgroundColor = '#4CAF50'; /* Green for success */
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-recycle"></i> Clear Cart';
+            btn.style.backgroundColor = 'var(--accent-color)';
+        }, 2000);
+    }
 }
 
 function updateCartHeader(cart) {
