@@ -150,3 +150,5 @@ function addToCart() {
     // Close popup
     closePopup();
 }
+
+    
