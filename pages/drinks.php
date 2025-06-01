@@ -1,5 +1,4 @@
 <?php include 'C:\xampp\htdocs\bellavista\includes\header.php'; ?>
-
 <section class="categories">
     <div class="container">
         <h2 class="section-title">Our Drinks Menu</h2>

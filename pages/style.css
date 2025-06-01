@@ -749,4 +749,153 @@ footer {
 
 .checkout-btn:hover {
     background-color: #A0522D;
-}
+} 
+
+
+
+
+
+/*style page form***************/
+        .panier-summary {
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .form-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        .radio-group {
+            margin: 25px 0;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .radio-option {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .radio-option input {
+            margin-right: 10px;
+        }
+    
+        .button_commander {
+            background: #3498db;
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+            display: block;
+            margin-top: 20px;
+        }
+        .button_commander:hover {
+            background: #2980b9;
+        }
+        #montant-group {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .total-display {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            color: #27ae60;
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .product-image {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: #3498db;
+            margin: 10px auto;
+        }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            th, td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+            .product-image {
+                width: 50px;
+                height: 50px;
+            }
+        }
