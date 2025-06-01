@@ -982,3 +982,36 @@ footer {
                 height: 50px;
             }
         }
+/* Clear Cart Button */
+.btn-clear {
+    background-color: #e74c3c; /* Alert red */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.btn-clear:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-clear:active {
+    transform: translateY(0);
+}
+
+.btn-clear i {
+    transition: transform 0.3s;
+}
+
+.btn-clear:hover i {
+    transform: scale(1.1);
+}
