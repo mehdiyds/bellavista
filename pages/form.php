@@ -46,11 +46,11 @@ foreach ($cart as $item) {
             <table>
                 <thead>
                     <tr>
-                        <th>Produit</th>
-                        <th>Image</th>
-                        <th>Prix</th>
-                        <th>Quantité</th>
-                        <th>Total</th>
+                        <th class="th_form">Produit</th>
+                        <th class="th_form">Image</th>
+                        <th class="th_form">Prix</th>
+                        <th class="th_form">Quantité</th>
+                        <th class="th_form">Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,20 +68,20 @@ foreach ($cart as $item) {
                         $itemTotal = $item['price'] * $item['quantity'];
                         $image = $productImages[$item['name']] ?? 'https://via.placeholder.com/50';
                         echo '<tr>';
-                        echo '<td>' . htmlspecialchars($item['name']) . '</td>';
-                        echo '<td><img src="' . $image . '" alt="' . htmlspecialchars($item['name']) . '" class="product-image"></td>';
-                        echo '<td>' . number_format($item['price'], 2) . ' DNT</td>';
-                        echo '<td>' . $item['quantity'] . '</td>';
-                        echo '<td>' . number_format($itemTotal, 2) . ' DNT</td>';
+                        echo '<td  class="td_form">' . htmlspecialchars($item['name']) . '</td>';
+                        echo '<td  class="td_form"><img src="' . $image . '" alt="' . htmlspecialchars($item['name']) . '" class="product-image"></td>';
+                        echo '<td  class="td_form">' . number_format($item['price'], 2) . ' DNT</td>';
+                        echo '<td  class="td_form">' . $item['quantity'] . '</td>';
+                        echo '<td  class="td_form">' . number_format($itemTotal, 2) . ' DNT</td>';
                         echo '</tr>';
                     }
                     ?>
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="4" style="text-align: right; font-weight: bold; padding: 15px;">Total TTC:</td>
-                        <td style="font-weight: bold; padding: 15px;"><?php echo number_format($total, 2); ?> DNT</td>
-                    </tr>
+                    
+                        <td colspan="4" style="text-align: right; font-weight: bold; padding: 15px;" class="td_form">Total TTC:</td>
+                        <td style="font-weight: bold; padding: 15px;" class="td_form"><?php echo number_format($total, 2); ?> DNT</td>
                 </tfoot>
             </table>
         </div>
