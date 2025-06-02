@@ -36,13 +36,13 @@
                 <div class="nav-links">
                     <a href="about.php">About Us</a>
                     <a href="contact.php">Contact</a>
-                   <div class="cart-icon">
-                    <a href="panier.php">
-                     <i class="fas fa-utensils"></i> <!-- Updated from fa-shopping-cart -->
-                     <div class="cart-count">0</div>
+                    <div class="cart-icon">
+                        <a href="panier.php">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="Cart" class="cart-logo">
+                        <div class="cart-count">0</div>
+                        
                     </div>
-                    <span class="cart-prix">0 DNT</span></a>
-
+                    <div class="cart-prix">0 DNT</div>
                     </a>
                 </div>
             </div>
