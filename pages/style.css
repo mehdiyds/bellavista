@@ -982,7 +982,6 @@ footer {
                 height: 50px;
             }
         }
-<<<<<<< HEAD
 /* Reservation Section */
 .reservation-section {
     padding: 60px 0;
@@ -1343,7 +1342,7 @@ footer {
     .form-container {
         padding: 25px;
     }
-=======
+}
 /* Clear Cart Button */
 .btn-clear {
     background-color: #e74c3c; /* Alert red */
@@ -1376,5 +1375,4 @@ footer {
 
 .btn-clear:hover i {
     transform: scale(1.1);
->>>>>>> 79b8784f3324cbd3abce2353a9bac6b816cd1f41
 }
