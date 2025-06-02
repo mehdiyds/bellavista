@@ -88,7 +88,7 @@ foreach ($cart as $item) {
 
 
         <div class="form-container">
-            <form action="traitement_commande.php" method="post">
+            <form action="confirmation.php" method="post">
                 <div class="form-group">
                     <label for="nom">Nom complet:</label>
                     <input type="text" id="nom" name="nom" required placeholder="Votre nom complet">

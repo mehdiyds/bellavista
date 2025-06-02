@@ -1342,7 +1342,11 @@ footer {
     .form-container {
         padding: 25px;
     }
+<<<<<<< HEAD
 
+=======
+}
+>>>>>>> 19681be68f93af4cf50ac319d0dc5ac45cbe3222
 /* Clear Cart Button */
 .btn-clear {
     background-color: #e74c3c; /* Alert red */
@@ -1375,5 +1379,9 @@ footer {
 
 .btn-clear:hover i {
     transform: scale(1.1);
+<<<<<<< HEAD
 
 }
+=======
+}
+>>>>>>> 19681be68f93af4cf50ac319d0dc5ac45cbe3222
