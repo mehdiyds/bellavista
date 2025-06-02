@@ -4,10 +4,7 @@
     <div class="hero-content">
         <h1>Experience the Finest Coffee & Cuisine</h1>
         <p>Authentic flavors crafted with passion and the finest ingredients</p>
-        <div class="hero-buttons">
-            <a href="#categories" class="btn">Explore Our Menu</a>
-            <a href="reservation.php" class="btn btn-reservation">Make Reservation</a>
-        </div>
+        <a href="#categories" class="btn">Explore Our Menu</a>
     </div>
 </section>
 
