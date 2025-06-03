@@ -10,7 +10,7 @@
     <div class="login-container">
         <h1 class="titrelog">Connexion Livreur</h1>
         
-        <form id="loginForm" action="ajout_livreur.php">
+        <form id="loginForm" method="POST" action="authenticate_livreur.php">
             <div class="form-group">
                 <label for="livreurId">Identifiant</label>
                 <input type="text" id="livreurId" name="livreurId" required>
@@ -35,20 +35,36 @@
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
             
-            // Validation basique (à remplacer par une vérification réelle en production)
-            if (livreurId && password) {
-                // Simulation de vérification
-                if (livreurId === "livreur1" && password === "delivery123") {
-                    // Redirection vers la page du livreur après connexion réussie
-                    window.location.href = "livreur-dashboard.html";
-                } else {
-                    errorMessage.textContent = "Identifiant ou mot de passe incorrect";
-                    errorMessage.style.display = "block";
-                }
-            } else {
+            // Validation basique côté client
+            if (!livreurId || !password) {
                 errorMessage.textContent = "Veuillez remplir tous les champs";
                 errorMessage.style.display = "block";
+                return;
             }
+            
+            // Envoi des données au serveur
+            fetch('authenticate_livreur.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `livreurId=${encodeURIComponent(livreurId)}&password=${encodeURIComponent(password)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirection après connexion réussie
+                    window.location.href = "livreur-dashboard.php";
+                } else {
+                    errorMessage.textContent = data.message || "Identifiant ou mot de passe incorrect";
+                    errorMessage.style.display = "block";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = "Une erreur est survenue lors de la connexion";
+                errorMessage.style.display = "block";
+            });
         });
     </script>
 </body>

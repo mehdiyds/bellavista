@@ -76,7 +76,7 @@ $order_details = isset($_SESSION['order_details']) ? $_SESSION['order_details'] 
             </div>
             
             <div class="action-buttons">
-                <a href="../index.php" class="action-btn home-btn">
+                <a href="index.php" class="action-btn home-btn">
                     <i class="fas fa-home"></i> Retour à l'accueil
                 </a>
                 <a href="../pages/panier.php" class="action-btn order-btn">

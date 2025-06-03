@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter un Livreur - Bella Vista</title>
     <link rel="stylesheet" href="style.css">
-    <style>
+     <style>
         /* Reset et styles de base */
         * {
             box-sizing: border-box;
@@ -97,7 +97,7 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-    </style>
+    </style>>
 </head>
 <body>
     <div class="container">
@@ -125,6 +125,10 @@
             <div class="form-group">
                 <label for="telephone" class="label_ajout">Téléphone</label>
                 <input type="tel" id="telephone" required>
+            </div>
+            <div class="form-group">
+                <label for="passwd" class="label_ajout">Password</label>
+                <input type="password" id="passwd" required>
             </div>
             
             <div class="form-group">
@@ -168,26 +172,43 @@
                 nom: document.getElementById('nom').value,
                 prenom: document.getElementById('prenom').value,
                 telephone: document.getElementById('telephone').value,
+                password: document.getElementById('passwd').value,
                 statut: document.getElementById('statut').value
             };
             
             // Validation simple
-            if (!livreur.id || !livreur.nom || !livreur.prenom || !livreur.telephone || !livreur.statut) {
+            if (!livreur.id || !livreur.nom || !livreur.prenom || !livreur.telephone || !livreur.statut || !livreur.password) {
                 showAlert('Veuillez remplir tous les champs', 'error');
                 return;
             }
             
-            // Ici, normalement on enverrait les données au serveur
-            // Pour cette démo, on simule juste l'enregistrement
-            showAlert(`Livreur ${livreur.prenom} ${livreur.nom} ajouté avec succès!`);
-            
-            // Réinitialisation du formulaire
-            this.reset();
-            
-            // Redirection après 2 secondes (simulation)
-            setTimeout(() => {
-                window.location.href = 'admin.php';
-            }, 2000);
+            // Envoi des données au serveur via AJAX
+            fetch('traitement_ajout_livreur.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(livreur)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(`Livreur ${livreur.prenom} ${livreur.nom} ajouté avec succès!`);
+                    // Réinitialisation du formulaire
+                    document.getElementById('form-ajout-livreur').reset();
+                    
+                    // Redirection après 2 secondes
+                    setTimeout(() => {
+                        window.location.href = 'admin.php';
+                    }, 2000);
+                } else {
+                    showAlert(data.message || 'Erreur lors de l\'ajout du livreur', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Une erreur est survenue lors de l\'envoi des données', 'error');
+            });
         });
 
         // Bouton Annuler
