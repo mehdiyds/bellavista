@@ -33,18 +33,26 @@
                         <div class="logo-text">Bella Vista</div>
                     </a>
                 </div>
-                <div class="nav-links">
+
+
+
+  <div class="nav-links">
                     <a href="about.php">About Us</a>
                     <a href="contact.php">Contact</a>
-                    <div class="cart-icon">
-                        <a href="panier.php">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="Cart" class="cart-logo">
-                        <div class="cart-count">0</div>
                         
+                   <div class="cart-icon">
+                    <a href="panier.php">
+                     <i class="fas fa-utensils"></i>
+                     <div class="cart-count">0</div>
                     </div>
-                    <div class="cart-prix">0 DNT</div>
+                    <span class="cart-prix">0 DNT</span></a>
+
                     </a>
                 </div>
             </div>
+        
+        
+        
+        
         </div>
     </header>
