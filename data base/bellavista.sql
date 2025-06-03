@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 03 juin 2025 à 14:30
+-- Généré le : mar. 03 juin 2025 à 15:41
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -30,11 +30,20 @@ SET time_zone = "+00:00";
 CREATE TABLE `clients` (
   `client_id` int(11) NOT NULL,
   `nom` varchar(50) NOT NULL,
-  `prenom` varchar(50) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `telephone` varchar(20) NOT NULL,
   `adresse` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `clients`
+--
+
+INSERT INTO `clients` (`client_id`, `nom`, `email`, `telephone`, `adresse`) VALUES
+(1, 'Bernard', NULL, '0123456789', '123 Rue de Paris'),
+(2, 'Petit', NULL, '0987654321', '456 Avenue des Champs'),
+(3, 'Leroy', NULL, '0555666777', '789 Boulevard Central'),
+(4, 'Moreau', NULL, '0333444555', '321 Rue Principale');
 
 -- --------------------------------------------------------
 
@@ -50,8 +59,19 @@ CREATE TABLE `commandes` (
   `montant_paye` decimal(10,2) DEFAULT 0.00,
   `reste` decimal(10,2) GENERATED ALWAYS AS (`montant_paye` - `montant_total`) STORED,
   `statut` enum('en attente','en préparation','assignée','en livraison','livrée','annulée') DEFAULT 'en attente',
-  `notes` text DEFAULT NULL
+  `notes` text DEFAULT NULL,
+  `commande` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `commandes`
+--
+
+INSERT INTO `commandes` (`commande_id`, `client_id`, `date_commande`, `montant_total`, `montant_paye`, `statut`, `notes`, `commande`) VALUES
+(1001, 1, '2023-05-15 18:30:00', 17.50, 17.50, 'en attente', NULL, NULL),
+(1002, 2, '2023-05-15 19:15:00', 9.50, 5.00, 'en attente', NULL, NULL),
+(1003, 3, '2023-05-15 20:00:00', 19.00, 19.00, 'en attente', NULL, NULL),
+(1004, 4, '2023-05-15 20:45:00', 16.50, 10.00, 'en attente', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -66,6 +86,20 @@ CREATE TABLE `details_commandes` (
   `quantite` int(11) NOT NULL DEFAULT 1,
   `prix_unitaire` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `details_commandes`
+--
+
+INSERT INTO `details_commandes` (`detail_id`, `commande_id`, `produit_id`, `quantite`, `prix_unitaire`) VALUES
+(1, 1001, 1, 1, 12.50),
+(2, 1001, 2, 2, 2.50),
+(3, 1002, 3, 1, 8.00),
+(4, 1002, 4, 1, 1.50),
+(5, 1003, 5, 1, 14.00),
+(6, 1003, 6, 1, 5.00),
+(7, 1004, 7, 1, 10.50),
+(8, 1004, 8, 1, 6.00);
 
 -- --------------------------------------------------------
 
@@ -111,6 +145,20 @@ CREATE TABLE `produits` (
   `prix` decimal(10,2) NOT NULL,
   `categorie` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `produits`
+--
+
+INSERT INTO `produits` (`produit_id`, `nom`, `description`, `prix`, `categorie`) VALUES
+(1, 'Pizza Margherita', NULL, 12.50, NULL),
+(2, 'Coca-Cola', NULL, 2.50, NULL),
+(3, 'Salade César', NULL, 8.00, NULL),
+(4, 'Eau minérale', NULL, 1.50, NULL),
+(5, 'Pizza 4 fromages', NULL, 14.00, NULL),
+(6, 'Tiramisu', NULL, 5.00, NULL),
+(7, 'Pasta Carbonara', NULL, 10.50, NULL),
+(8, 'Vin rouge', NULL, 6.00, NULL);
 
 --
 -- Index pour les tables déchargées
@@ -166,19 +214,19 @@ ALTER TABLE `produits`
 -- AUTO_INCREMENT pour la table `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `commandes`
 --
 ALTER TABLE `commandes`
-  MODIFY `commande_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `commande_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1005;
 
 --
 -- AUTO_INCREMENT pour la table `details_commandes`
 --
 ALTER TABLE `details_commandes`
-  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `livraisons`
@@ -196,7 +244,7 @@ ALTER TABLE `livreurs`
 -- AUTO_INCREMENT pour la table `produits`
 --
 ALTER TABLE `produits`
-  MODIFY `produit_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `produit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Contraintes pour les tables déchargées
