@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 02 juin 2025 à 18:53
+-- Généré le : mar. 03 juin 2025 à 12:14
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -92,7 +92,8 @@ CREATE TABLE `livreurs` (
   `nom` varchar(50) NOT NULL,
   `prenom` varchar(50) DEFAULT NULL,
   `telephone` varchar(20) NOT NULL,
-  `statut` enum('disponible','en livraison','indisponible') DEFAULT 'disponible'
+  `statut` enum('disponible','en livraison','indisponible') DEFAULT 'disponible',
+  `mdp` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
