@@ -3,7 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
+<<<<<<< HEAD
 -- Généré le : mar. 03 juin 2025 à 14:21
+=======
+-- Généré le : mar. 03 juin 2025 à 13:23
+>>>>>>> 13b5a852004fb5bfab38ba3cfebcc5a57bd8f027
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -24,6 +28,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+<<<<<<< HEAD
 -- Structure de la table `clients`
 --
 
@@ -86,6 +91,8 @@ CREATE TABLE `livraisons` (
 -- --------------------------------------------------------
 
 --
+=======
+>>>>>>> 13b5a852004fb5bfab38ba3cfebcc5a57bd8f027
 -- Structure de la table `livreurs`
 --
 
@@ -98,53 +105,16 @@ CREATE TABLE `livreurs` (
   `mdp` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Structure de la table `produits`
+-- Déchargement des données de la table `livreurs`
 --
 
-CREATE TABLE `produits` (
-  `produit_id` int(11) NOT NULL,
-  `nom` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
-  `prix` decimal(10,2) NOT NULL,
-  `categorie` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `livreurs` (`livreur_id`, `nom`, `prenom`, `telephone`, `statut`, `mdp`) VALUES
+(1, 'charaabi', 'nassim', '26719771', 'disponible', '123456');
 
 --
 -- Index pour les tables déchargées
 --
-
---
--- Index pour la table `clients`
---
-ALTER TABLE `clients`
-  ADD PRIMARY KEY (`client_id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- Index pour la table `commandes`
---
-ALTER TABLE `commandes`
-  ADD PRIMARY KEY (`commande_id`),
-  ADD KEY `client_id` (`client_id`);
-
---
--- Index pour la table `details_commandes`
---
-ALTER TABLE `details_commandes`
-  ADD PRIMARY KEY (`detail_id`),
-  ADD KEY `commande_id` (`commande_id`),
-  ADD KEY `produit_id` (`produit_id`);
-
---
--- Index pour la table `livraisons`
---
-ALTER TABLE `livraisons`
-  ADD PRIMARY KEY (`livraison_id`),
-  ADD UNIQUE KEY `commande_id` (`commande_id`),
-  ADD KEY `livreur_id` (`livreur_id`);
 
 --
 -- Index pour la table `livreurs`
@@ -153,74 +123,14 @@ ALTER TABLE `livreurs`
   ADD PRIMARY KEY (`livreur_id`);
 
 --
--- Index pour la table `produits`
---
-ALTER TABLE `produits`
-  ADD PRIMARY KEY (`produit_id`);
-
---
 -- AUTO_INCREMENT pour les tables déchargées
 --
-
---
--- AUTO_INCREMENT pour la table `clients`
---
-ALTER TABLE `clients`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT pour la table `commandes`
---
-ALTER TABLE `commandes`
-  MODIFY `commande_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT pour la table `details_commandes`
---
-ALTER TABLE `details_commandes`
-  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT pour la table `livraisons`
---
-ALTER TABLE `livraisons`
-  MODIFY `livraison_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `livreurs`
 --
 ALTER TABLE `livreurs`
-  MODIFY `livreur_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT pour la table `produits`
---
-ALTER TABLE `produits`
-  MODIFY `produit_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Contraintes pour les tables déchargées
---
-
---
--- Contraintes pour la table `commandes`
---
-ALTER TABLE `commandes`
-  ADD CONSTRAINT `commandes_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`);
-
---
--- Contraintes pour la table `details_commandes`
---
-ALTER TABLE `details_commandes`
-  ADD CONSTRAINT `details_commandes_ibfk_1` FOREIGN KEY (`commande_id`) REFERENCES `commandes` (`commande_id`),
-  ADD CONSTRAINT `details_commandes_ibfk_2` FOREIGN KEY (`produit_id`) REFERENCES `produits` (`produit_id`);
-
---
--- Contraintes pour la table `livraisons`
---
-ALTER TABLE `livraisons`
-  ADD CONSTRAINT `livraisons_ibfk_1` FOREIGN KEY (`commande_id`) REFERENCES `commandes` (`commande_id`),
-  ADD CONSTRAINT `livraisons_ibfk_2` FOREIGN KEY (`livreur_id`) REFERENCES `livreurs` (`livreur_id`);
+  MODIFY `livreur_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
