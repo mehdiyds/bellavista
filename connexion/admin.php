@@ -40,7 +40,7 @@
             </select>
             <button type="button" id="assign-btn" class="assign-btn">Assigner au livreur</button>
             <button type="button" id="delete-btn" class="delete-btn">Supprimer la sélection</button>
-            <button type="button" id="assign-btn" class="ajout-btn"><a href="ajout_livreur.php">Ajouter un livreur</a></button>
+            <button type="button" id="assign-btn" class="ajout-btn">Ajouter un livreur</button>
         </div>
     </div>
 </body>
