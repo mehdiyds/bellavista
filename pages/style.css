@@ -1373,13 +1373,7 @@ footer {
 }
 
 .btn-clear:hover i {
-    transform: scale(1.1);
-<<<<<<< HEAD
-
-
-=======
->>>>>>> ab830db46ceb2f9a1833c8e02774a7a36d621f4a
-}
+    transform: scale(1.1);}
 /* style page confirmation*/
         .confirmation-container {
             max-width: 800px;
@@ -1510,8 +1504,9 @@ footer {
              }
         }
     }
-<<<<<<< HEAD
-=======
+
+
+    
     body {
             background-color: #f5f5dc;
             overflow-x: hidden;
@@ -1645,4 +1640,3 @@ footer {
                 margin: 20px;
              }
             }
->>>>>>> ab830db46ceb2f9a1833c8e02774a7a36d621f4a
