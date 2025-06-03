@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 03 juin 2025 à 12:14
+-- Généré le : mar. 03 juin 2025 à 14:21
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -47,6 +47,8 @@ CREATE TABLE `commandes` (
   `client_id` int(11) NOT NULL,
   `date_commande` datetime DEFAULT current_timestamp(),
   `montant_total` decimal(10,2) NOT NULL,
+  `montant_paye` decimal(10,2) DEFAULT 0.00,
+  `reste` decimal(10,2) GENERATED ALWAYS AS (`montant_paye` - `montant_total`) STORED,
   `statut` enum('en attente','en préparation','assignée','en livraison','livrée','annulée') DEFAULT 'en attente',
   `notes` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
