@@ -1,10 +1,11 @@
 <?php
 header('Content-Type: application/json');
-
-// Démarrer la session
 session_start();
 
-// Connexion à la base de données
+// Activer le débogage
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 try {
     $db = new PDO('mysql:host=127.0.0.1;dbname=bellavista;charset=utf8', 'root', '');
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -13,34 +14,43 @@ try {
     exit;
 }
 
-// Récupération des données du formulaire
 $livreurId = $_POST['livreurId'] ?? '';
 $password = $_POST['password'] ?? '';
 
-// Vérification des champs vides
 if (empty($livreurId) || empty($password)) {
     echo json_encode(['success' => false, 'message' => 'Veuillez remplir tous les champs']);
     exit;
 }
 
 try {
-    // Recherche du livreur dans la base de données
     $stmt = $db->prepare("SELECT * FROM livreurs WHERE livreur_id = :livreur_id");
     $stmt->execute([':livreur_id' => $livreurId]);
     $livreur = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Vérification si le livreur existe et que le mot de passe correspond
     if ($livreur && $password === $livreur['mdp']) {
-        // Authentification réussie
-        $_SESSION['livreur_id'] = $livreur['livreur_id'];
-        $_SESSION['livreur_nom'] = $livreur['nom'];
-        $_SESSION['livreur_prenom'] = $livreur['prenom'];
+        $_SESSION['livreur'] = [
+            'id' => $livreur['livreur_id'],
+            'nom' => $livreur['nom'],
+            'prenom' => $livreur['prenom'],
+            'telephone' => $livreur['telephone'],
+            'statut' => $livreur['statut']
+        ];
         
         echo json_encode(['success' => true]);
     } else {
-        // Authentification échouée
-        echo json_encode(['success' => false, 'message' => 'Identifiant ou mot de passe incorrect']);
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Identifiant ou mot de passe incorrect',
+            'debug' => [
+                'livreur_trouve' => $livreur ? true : false,
+                'password_match' => $livreur && ($password === $livreur['mdp'])
+            ]
+        ]);
     }
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Erreur lors de la vérification des identifiants']);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Erreur lors de la vérification des identifiants',
+        'error' => $e->getMessage()
+    ]);
 }

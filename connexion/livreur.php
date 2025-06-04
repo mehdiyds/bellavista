@@ -1,3 +1,40 @@
+<?php
+session_start();
+
+// Vérifier si le livreur est connecté
+if (!isset($_SESSION['livreur'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$livreur = $_SESSION['livreur'];
+
+// Connexion à la base de données
+try {
+    $db = new PDO('mysql:host=127.0.0.1;dbname=bellavista;charset=utf8', 'root', '');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // Récupérer les livraisons assignées à ce livreur
+    $stmt = $db->prepare("
+    SELECT l.livraison_id, l.commande_id, l.statut, l.date_assignation,
+           c.client_id, cl.nom AS client_nom, 
+           cl.telephone, cl.adresse, c.montant_total, c.commande,
+           DATE_FORMAT(c.date_commande, '%Y-%m-%d %H:%i') AS date_commande
+    FROM livraisons l
+    JOIN commandes c ON l.commande_id = c.commande_id
+    JOIN clients cl ON c.client_id = cl.client_id
+    WHERE l.livreur_id = :livreur_id
+    AND l.statut != 'livrée'
+    ORDER BY l.date_assignation DESC
+");
+    $stmt->execute([':livreur_id' => $livreur['id']]);
+    $livraisons = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+} catch (PDOException $e) {
+    die("Erreur de base de données: " . $e->getMessage());
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -180,14 +217,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Espace Livreur - Jean Dupont</h1>
+        <h1>Espace Livreur - <?= htmlspecialchars($livreur['prenom'] . ' ' . $livreur['nom']) ?></h1>
         
         <div id="alertSuccess" class="alert alert-success"></div>
         <div id="alertError" class="alert alert-error"></div>
         
         <div class="livreur-info">
-            <p><strong>Téléphone:</strong> 06 12 34 56 78</p>
-            <p><strong>Statut:</strong> <span class="statut-badge" data-statut="disponible">disponible</span></p>
+            <p><strong>Téléphone:</strong> <?= htmlspecialchars($livreur['telephone']) ?></p>
+            <p><strong>Statut:</strong> <span class="statut-badge" data-statut="<?= htmlspecialchars($livreur['statut']) ?>">
+                <?= htmlspecialchars($livreur['statut']) ?>
+            </span></p>
         </div>
         
         <h2>Livraisons assignées</h2>
@@ -204,7 +243,37 @@
                 </tr>
             </thead>
             <tbody id="livraisons-list">
-                <!-- Les livraisons seront ajoutées ici par JavaScript -->
+                <?php if (empty($livraisons)): ?>
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Aucune livraison assignée</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($livraisons as $livraison): ?>
+                        <tr>
+                            <td>#<?= htmlspecialchars($livraison['livraison_id']) ?></td>
+                            <td>
+                                #<?= htmlspecialchars($livraison['commande_id']) ?><br>
+                                <small><?= htmlspecialchars($livraison['date_commande']) ?></small>
+                            </td>
+                            <td>
+                                <?= htmlspecialchars($livraison['client_nom']) ?><br>
+                                <small><?= htmlspecialchars($livraison['telephone']) ?></small>
+                            </td>
+                            <td><?= htmlspecialchars($livraison['adresse']) ?></td>
+                            <td><?= number_format($livraison['montant_total'], 2, '.', '') ?> DT</td>
+                            <td>
+                                <span class="statut-badge" data-statut="<?= htmlspecialchars($livraison['statut']) ?>">
+                                    <?= htmlspecialchars($livraison['statut']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <button class="assign-btn marquer-btn" data-livraison="<?= $livraison['livraison_id'] ?>">
+                                    Marquer comme livrée
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
         
@@ -219,98 +288,61 @@
     </div>
 
     <script>
-        // Données simulées
-        const livreur = {
-            id: 1,
-            nom: "Jean Dupont",
-            telephone: "06 12 34 56 78",
-            statut: "disponible"
-        };
-
-        const livraisons = [
-            {
-                livraison_id: 101,
-                commande_id: 1001,
-                date_commande: "2023-05-15 18:30",
-                client_nom: "Bernard",
-                client_prenom: "Michel",
-                telephone: "06 11 22 33 44",
-                adresse: "12 Rue des Fleurs, 75001 Paris",
-                montant_total: "25.50",
-                statut: "en cours"
-            },
-            {
-                livraison_id: 102,
-                commande_id: 1002,
-                date_commande: "2023-05-15 19:15",
-                client_nom: "Petit",
-                client_prenom: "Élodie",
-                telephone: "06 55 66 77 88",
-                adresse: "34 Avenue des Champs, 75008 Paris",
-                montant_total: "18.00",
-                statut: "en cours"
-            }
-        ];
-
-        // Afficher les livraisons
-        function afficherLivraisons() {
-            const tbody = document.getElementById('livraisons-list');
-            tbody.innerHTML = '';
-            
-            if (livraisons.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center;">Aucune livraison assignée</td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            livraisons.forEach(livraison => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>#${livraison.livraison_id}</td>
-                    <td>
-                        #${livraison.commande_id}<br>
-                        <small>${livraison.date_commande}</small>
-                    </td>
-                    <td>
-                        ${livraison.client_prenom} ${livraison.client_nom}<br>
-                        <small>${livraison.telephone}</small>
-                    </td>
-                    <td>${livraison.adresse}</td>
-                    <td>${livraison.montant_total} €</td>
-                    <td>
-                        <span class="statut-badge" data-statut="${livraison.statut}">${livraison.statut}</span>
-                    </td>
-                    <td>
-                        <button class="assign-btn marquer-btn" data-livraison="${livraison.livraison_id}">
-                            Marquer comme livrée
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
         // Fonction pour marquer une livraison comme terminée
         function marquerLivree(livraisonId) {
-            const livraison = livraisons.find(l => l.livraison_id == livraisonId);
-            if (livraison) {
-                livraison.statut = "livrée";
-                showAlert(`Livraison #${livraisonId} marquée comme livrée`, 'success');
-                afficherLivraisons();
-            } else {
-                showAlert("Livraison non trouvée", 'error');
-            }
+            fetch('update_livraison.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    livraison_id: livraisonId,
+                    statut: 'livrée'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Livraison marquée comme livrée', 'success');
+                    // Recharger la page pour voir les changements
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showAlert('Erreur: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Une erreur est survenue', 'error');
+            });
         }
 
         // Fonction pour changer le statut du livreur
         function changerStatut(statut) {
-            livreur.statut = statut;
-            showAlert(`Statut mis à jour: ${statut}`, 'success');
-            document.querySelector('.livreur-info .statut-badge').textContent = statut;
-            document.querySelector('.livreur-info .statut-badge').setAttribute('data-statut', statut);
+            fetch('update_livreur.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    livreur_id: <?= $livreur['id'] ?>,
+                    statut: statut
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Statut mis à jour: ' + statut, 'success');
+                    // Mettre à jour l'affichage du statut
+                    document.querySelector('.statut-badge').textContent = statut;
+                    document.querySelector('.statut-badge').setAttribute('data-statut', statut);
+                } else {
+                    showAlert('Erreur: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Une erreur est survenue', 'error');
+            });
         }
 
         // Fonction pour afficher les messages
@@ -329,9 +361,7 @@
 
         // Événements au chargement
         document.addEventListener('DOMContentLoaded', () => {
-            afficherLivraisons();
-            
-            // Boutons de marquage de livraison (délégué car dynamiques)
+            // Boutons de marquage de livraison
             document.addEventListener('click', function(e) {
                 if (e.target && e.target.classList.contains('marquer-btn')) {
                     const livraisonId = e.target.getAttribute('data-livraison');

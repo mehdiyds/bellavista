@@ -52,9 +52,10 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Réponse du serveur:', data); // Debug
                 if (data.success) {
                     // Redirection après connexion réussie
-                    window.location.href = "livreur-dashboard.php";
+                    window.location.href = "livreur.php";
                 } else {
                     errorMessage.textContent = data.message || "Identifiant ou mot de passe incorrect";
                     errorMessage.style.display = "block";
