@@ -53,6 +53,12 @@
             color: #27ae60;
             font-weight: bold;
         }
+        .stat-btn {
+            background-color: #2196F3;
+        }
+        .stat-btn:hover {
+            background-color: #0b7dda;
+        }
     </style>
 </head>
 <body>
@@ -226,9 +232,12 @@ if (!$livreurs) {
 </select>
             
             <button type="button" id="assign-btn" class="assign-btn">Assigner au livreur</button>
-            <button type="button" id="delete-btn" class="delete-btn">Valider la lavraison</button>
+            <button type="button" id="delete-btn" class="delete-btn">Valider la livraison</button>
             <a href="ajout_livreur.php">
                 <button type="button" id="ajout-btn" class="ajout-btn">Ajouter un livreur</button>
+            </a>
+            <a href="statistique.php">
+                <button type="button" id="stat-btn" class="stat-btn">Statistique</button>
             </a>
         </div>
         
