@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
         /* Reset et styles de base */
         * {
             box-sizing: border-box;
@@ -223,7 +223,6 @@
             text-align: center;
             display: none;
         }
-=======
         /* Reset et styles de base */
         * {
             box-sizing: border-box;
@@ -371,11 +370,9 @@
                 align-items: flex-start;
             }
         }
-<<<<<<< HEAD
 /* style de la page ajout_livreur*/
 
 
-=======
  /* style page login*/
 * {
             box-sizing: border-box;
@@ -451,4 +448,3 @@
             display: none;
         }
         
->>>>>>> 5681ae09907b02ccecce541f7449cbb97b8ac709

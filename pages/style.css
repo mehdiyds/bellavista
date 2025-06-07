@@ -165,7 +165,8 @@ header {
         flex-direction: column;
         align-items: center;
         gap: 12px;
-    }
+    } 
+
     
     .hero-buttons .btn {
         width: 100%;
@@ -260,131 +261,10 @@ header {
 }
 
 /* === Categories Section === */
-.categories {
-    padding: 40px 0;
-    text-align: center;
-}
 
-.section-title {
-    font-size: 32px;
-    color: var(--dark-color);
-    margin-bottom: 10px;
-}
 
-.section-subtitle {
-    font-size: 16px;
-    color: var(--text-color);
-    margin-bottom: 40px;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-}
 
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
-    margin-top: 30px;
-}
 
-.category-card {
-    background: var(--white);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: transform 0.3s;
-}
-
-.category-card:hover {
-    transform: translateY(-5px);
-}
-
-.category-img {
-    height: 180px;
-    overflow: hidden;
-}
-
-.category-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s;
-}
-
-.category-card:hover .category-img img {
-    transform: scale(1.05);
-}
-
-.category-content {
-    padding: 15px;
-}
-
-.category-title {
-    font-size: 22px;
-    color: var(--dark-color);
-    margin-bottom: 8px;
-}
-
-.category-desc {
-    color: var(--text-color);
-    margin-bottom: 15px;
-    font-size: 14px;
-}
-
-/* Menu Items (for category pages) */
-.menu-item {
-    background: var(--white);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-}
-
-.item-img {
-    height: 200px;
-    overflow: hidden;
-}
-
-.item-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.item-content {
-    padding: 15px;
-}
-
-.item-content h3 {
-    font-size: 20px;
-    margin-bottom: 5px;
-}
-
-.item-content p {
-    font-size: 14px;
-    color: var(--text-color);
-    margin-bottom: 10px;
-}
-
-.price {
-    display: block;
-    font-weight: bold;
-    color: var(--accent-color);
-    margin-bottom: 10px;
-}
-
-.add-to-cart {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.add-to-cart:hover {
-    background-color: var(--accent-color);
-}
 
 /* === Footer Styles === */
 footer {
@@ -566,129 +446,6 @@ footer {
 
 
 
-/*ki tenzel 3al produit*/
-    /* Keep original image sizes */
-    .item-img img {
-        width: 100%;
-        height: auto;
-        max-height: 200px;
-        object-fit: cover;
-    }
-    
-    /* Animation and Popup Styles */
-    .menu-item {
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .menu-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    
-    .popup-container {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.8);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .popup-content {
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-        width: 90%;
-        max-width: 500px;
-        animation: popupFadeIn 0.3s;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-    
-    .popup-animation {
-        height: 4px;
-        background: linear-gradient(to right, #8B4513, #A0522D, #CD853F);
-        width: 0%;
-        animation: loadingBar 0.3s forwards;
-        margin-bottom: 15px;
-    }
-    
-    .popup-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-    
-    .close-popup {
-        font-size: 28px;
-        cursor: pointer;
-        color: #777;
-    }
-    
-    .popup-body img {
-        width: 100%;
-        max-height: 250px;
-        object-fit: cover;
-        border-radius: 8px;
-        margin-bottom: 15px;
-    }
-    
-    .drink-characteristics {
-        margin: 15px 0;
-        padding: 15px;
-        background: #f9f9f9;
-        border-radius: 8px;
-    }
-    
-    .popup-footer {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-        gap: 10px;
-    }
-    
-    .popup-footer button {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .cancel-btn {
-        background: #f1f1f1;
-        color: #333;
-    }
-    
-    .cancel-btn:hover {
-        background: #e0e0e0;
-    }
-    
-    .add-to-cart {
-        background: #8B4513;
-        color: white;
-    }
-    
-    .add-to-cart:hover {
-        background: #A0522D;
-    }
-    
-    @keyframes popupFadeIn {
-        from { opacity: 0; transform: scale(0.9); }
-        to { opacity: 1; transform: scale(1); }
-    }
-    
-    @keyframes loadingBar {
-        from { width: 0%; }
-        to { width: 100%; }
-    }
 
      /* tzid lel panier */
 
@@ -766,16 +523,6 @@ footer {
     font-weight: bold;
 }
 
-.product-image-cell {
-    width: 80px;
-}
-
-.product-image {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 4px;
-}
 
 .remove-btn {
     background: none;
@@ -838,150 +585,6 @@ footer {
 
 
 
-/*style page form***************/
-        .panier-summary {
-            margin-bottom: 30px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .form-container {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        input[type="text"],
-        input[type="tel"],
-        input[type="number"] {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-        input:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-        .radio-group {
-            margin: 25px 0;
-            padding: 15px;
-            background: #fff;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-        }
-        .radio-option {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        .radio-option input {
-            margin-right: 10px;
-        }
-    
-        .button_commander {
-            background: #3498db;
-            color: white;
-            padding: 14px 25px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 600;
-            width: 100%;
-            transition: background 0.3s;
-            display: block;
-            margin-top: 20px;
-        }
-        .button_commander:hover {
-            background: #2980b9;
-        }
-        #montant-group {
-            display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background: #fff;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-        }
-        .total-display {
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
-            color: #27ae60;
-            margin: 20px 0;
-            padding: 15px;
-            background: #e8f5e9;
-            border-radius: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .th_form, .td_form {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-        .product-image {
-            width: 70px;
-            height: 70px;
-            object-fit: cover;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .section-title {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-        }
-        .section-title:after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 3px;
-            background: #3498db;
-            margin: 10px auto;
-        }
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-                margin: 10px;
-            }
-            .th_form, .td_form {
-                padding: 10px 8px;
-                font-size: 14px;
-            }
-            .product-image {
-                width: 50px;
-                height: 50px;
-            }
-        }
 /* Reservation Section */
 .reservation-section {
     padding: 60px 0;
@@ -1505,11 +1108,6 @@ footer {
         }
     }
 
-<<<<<<< HEAD
-=======
-
-    
->>>>>>> 7dbf3bb4c4c49099817b018d7f5b590ae5789021
     body {
             background-color: #f5f5dc;
             overflow-x: hidden;
@@ -1643,3 +1241,11 @@ footer {
                 margin: 20px;
              }
             }
+
+
+
+
+
+
+
+            
