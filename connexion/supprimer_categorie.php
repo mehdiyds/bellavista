@@ -1,8 +1,14 @@
 <?php
-// Définir la base URL comme dans index.php
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Initialize variables
+$categories = [];
+$search = '';
 $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
 
-// Connexion à la base de données
+// Database connection
 $host = 'localhost';
 $dbname = 'bellavista';
 $username = 'root';
@@ -12,25 +18,19 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Traitement de la suppression
+    // Handle category deletion
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['supprimer'])) {
         $id_cat = $_POST['id_cat'];
         
-        // Récupérer la catégorie
         $stmt = $pdo->prepare("SELECT id_cat, image FROM categories WHERE id_cat = ?");
         $stmt->execute([$id_cat]);
         $category = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($category) {
-            // Supprimer la catégorie
             $pdo->prepare("DELETE FROM categories WHERE id_cat = ?")->execute([$id_cat]);
             
-            // Supprimer l'image si elle existe
             if (!empty($category['image'])) {
-                // Convertir le chemin relatif en chemin absolu
-                $relative_path = str_replace($base_url, '', $category['image']);
-                $absolute_path = $_SERVER['DOCUMENT_ROOT'] . '/bellavista/' . $relative_path;
-                
+                $absolute_path = $_SERVER['DOCUMENT_ROOT'] . '/bellavista/' . $category['image'];
                 if (file_exists($absolute_path)) {
                     unlink($absolute_path);
                 }
@@ -41,11 +41,23 @@ try {
         exit();
     }
 
-    // Récupérer les catégories avec le bon format d'image
-    $stmt = $pdo->query("SELECT * FROM categories");
+    // Handle search
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    
+    $sql = "SELECT * FROM categories";
+    $params = [];
+    
+    if (!empty($search)) {
+        $sql .= " WHERE nom LIKE ? OR description LIKE ?";
+        $searchTerm = '%' . $search . '%';
+        $params = [$searchTerm, $searchTerm];
+    }
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Formater les chemins d'images comme dans index.php
+    // Format image paths
     foreach ($categories as &$category) {
         if (!empty($category['image'])) {
             $category['image'] = $base_url . $category['image'];
@@ -82,6 +94,40 @@ try {
             color: #333;
             text-align: center;
         }
+        .search-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .search-input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .search-button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-button:hover {
+            background-color: #2980b9;
+        }
+        .reset-search {
+            padding: 10px 15px;
+            background-color: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .reset-search:hover {
+            background-color: #7f8c8d;
+        }
         .categories-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -93,11 +139,6 @@ try {
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-            transition: transform 0.3s;
-        }
-        .category-card:hover {
-            transform: translateY(-5px);
         }
         .category-image {
             height: 200px;
@@ -132,8 +173,6 @@ try {
             padding: 8px 15px;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
         }
         .delete-btn:hover {
             background-color: #c0392b;
@@ -154,11 +193,16 @@ try {
             color: white;
             text-decoration: none;
             border-radius: 4px;
-            font-weight: bold;
         }
         .no-image {
             color: #999;
             font-style: italic;
+        }
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            color: #666;
         }
     </style>
 </head>
@@ -173,12 +217,22 @@ try {
             </div>
         <?php endif; ?>
 
+        <form method="GET" class="search-container">
+            <input type="text" name="search" class="search-input" 
+                   placeholder="Rechercher par nom ou description" 
+                   value="<?= htmlspecialchars($search) ?>">
+            <button type="submit" class="search-button">Rechercher</button>
+            <?php if (!empty($search)): ?>
+                <a href="supprimer_categorie.php" class="reset-search">Réinitialiser</a>
+            <?php endif; ?>
+        </form>
+
         <div class="categories-grid">
-            <?php if (count($categories) > 0): ?>
+            <?php if (!empty($categories) && is_array($categories)): ?>
                 <?php foreach ($categories as $category): ?>
                     <div class="category-card">
                         <div class="category-image">
-                            <?php if (!empty($category['image']) && file_exists($category['image'])): ?>
+                            <?php if (!empty($category['image'])): ?>
                                 <img src="<?= $category['image'] ?>" alt="<?= htmlspecialchars($category['nom']) ?>">
                             <?php else: ?>
                                 <span class="no-image">Image non disponible</span>
@@ -187,7 +241,7 @@ try {
                         <div class="category-info">
                             <h3><?= htmlspecialchars($category['nom']) ?></h3>
                             <p><?= htmlspecialchars($category['description']) ?></p>
-                            <form method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie? Cette action est irréversible.');">
+                            <form method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie?');">
                                 <input type="hidden" name="id_cat" value="<?= $category['id_cat'] ?>">
                                 <button type="submit" name="supprimer" class="delete-btn">Supprimer</button>
                             </form>
@@ -195,7 +249,9 @@ try {
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p>Aucune catégorie disponible.</p>
+                <p class="no-results">
+                    <?= empty($search) ? 'Aucune catégorie disponible.' : 'Aucun résultat trouvé pour "' . htmlspecialchars($search) . '"' ?>
+                </p>
             <?php endif; ?>
         </div>
     </div>
