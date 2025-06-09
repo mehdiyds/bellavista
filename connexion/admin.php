@@ -67,6 +67,9 @@
         .stat-btn {
             background-color: #3498db; /* Bleu */
         }
+        .sup-btn{
+            background-color: red;
+        }
         .assign-btn {
             background-color: #2ecc71; /* Vert */
         }
@@ -263,6 +266,14 @@
                 <div class="button-group">
                     <a href="statistique.php"><button type="button" class="stat-btn">Statistiques</button></a>
                 </div>
+
+                <div class="button-group">
+                <a href="supprimer_categorie.php"><button type="button" class="sup-btn">Supprimer une catégorie</button></a>
+                </div>
+
+               <div class="button-group">
+                <a href="supprimer_produit.php"><button type="button" class="sup-btn">Supprimer un produit</button></a>
+               </div>
             </div>
         </form>
         
