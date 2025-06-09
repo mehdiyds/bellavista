@@ -33,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
 </form>
 <style>
     /* === Panier Page Styles === */
-
 /* Ajouter dans la section style */
 input[type="number"] {
     width: 60px;
@@ -55,18 +54,6 @@ input[type="number"] {
 .cart-table a:hover {
     text-decoration: underline;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 .panier-section {
     padding: 60px 0;
@@ -152,6 +139,38 @@ input[type="number"] {
     height: 60px;
     object-fit: cover;
     border-radius: 8px;
+}
+
+/* Quantity Controls */
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.quantity-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.quantity {
+    min-width: 20px;
+    text-align: center;
 }
 
 /* Remove Button */
@@ -247,6 +266,10 @@ input[type="number"] {
         margin-right: 15px;
     }
     
+    .quantity-controls {
+        margin-left: auto;
+    }
+    
     .cart-actions {
         flex-direction: column;
     }
@@ -267,12 +290,13 @@ input[type="number"] {
     animation: cartItemAdded 0.5s ease;
 }
 </style>
+
 <section class="panier-section">
     <div class="container-panier">
         <h1 class="section-title">PANIER</h1>
         
         <div class="cart-controls">
-            <button id="clearCartBtn" class="clear-cart-btn">Clear Cart</button>
+            <button id="clearCartBtn" class="clear-cart-btn">Vider le panier</button>
         </div>
         
         <div class="cart-items">
@@ -293,12 +317,14 @@ input[type="number"] {
             </table>
             
             <div class="cart-total">
-                <h3>Total TTC: <span id="cartTotal">0 DNT</span></h3>
+                <h3>Total TTC: <span id="cartTotal">0 DH</span></h3>
             </div>
             
             <div class="cart-actions">
                 <button class="btn continue-btn">Continuer Mes Achats</button>
+                <a href="form.php">
                 <button class="btn checkout-btn">Commander &gt;</button>
+                </a>
             </div>
         </div>
     </div>
@@ -322,6 +348,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('clearCartBtn').addEventListener('click', clearCart);
 });
 
+function updateCartSession() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    document.getElementById('cartDataInput').value = JSON.stringify(cart);
+    document.getElementById('cartForm').submit();
+}
+
 function loadCartItems() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartItemsBody = document.getElementById('cartItemsBody');
@@ -343,7 +375,6 @@ function loadCartItems() {
     }
     
     cart.forEach((item, index) => {
-        // Assurer que l'item a toutes les propriétés nécessaires avec des valeurs par défaut
         const safeItem = {
             id: item.id || 0,
             name: item.name || 'Produit sans nom',
@@ -366,15 +397,41 @@ function loadCartItems() {
             </td>
             <td data-label="Prix">${safeItem.price.toFixed(2)} DH</td>
             <td data-label="Quantité">
-                <input type="number" min="1" value="${safeItem.quantity}" 
-                       onchange="updateQuantity(${index}, this.value)">
+                <div class="quantity-controls">
+                    <button class="quantity-btn minus" data-index="${index}">-</button>
+                    <input type="number" min="1" value="${safeItem.quantity}" 
+                           onchange="updateQuantity(${index}, this.value)">
+                    <button class="quantity-btn plus" data-index="${index}">+</button>
+                </div>
             </td>
             <td data-label="Total">${itemTotal.toFixed(2)} DH</td>
             <td data-label="Action">
                 <button class="remove-btn" onclick="removeFromCart(${index})">✕</button>
             </td>
         `;
+        
+        if (index === cart.length - 1) {
+            row.classList.add('cart-item-added');
+        }
+        
         cartItemsBody.appendChild(row);
+    });
+    
+    // Add event listeners to quantity buttons
+    document.querySelectorAll('.quantity-btn.minus').forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            const input = this.nextElementSibling;
+            updateQuantity(index, parseInt(input.value) - 1);
+        });
+    });
+    
+    document.querySelectorAll('.quantity-btn.plus').forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            const input = this.previousElementSibling;
+            updateQuantity(index, parseInt(input.value) + 1);
+        });
     });
     
     cartTotalElement.textContent = total.toFixed(2) + ' DH';
@@ -383,7 +440,6 @@ function loadCartItems() {
 
 function updateQuantity(index, newQuantity) {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    newQuantity = parseInt(newQuantity);
     
     if (index >= 0 && index < cart.length && newQuantity > 0) {
         cart[index].quantity = newQuantity;
@@ -396,6 +452,7 @@ function updateQuantity(index, newQuantity) {
 
 function removeFromCart(index) {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
     if (index >= 0 && index < cart.length) {
         cart.splice(index, 1);
         localStorage.setItem('cart', JSON.stringify(cart));
@@ -412,12 +469,6 @@ function clearCart() {
     }
 }
 
-function updateCartSession() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    document.getElementById('cartDataInput').value = JSON.stringify(cart);
-    document.getElementById('cartForm').submit();
-}
-
 function updateCartHeader() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
@@ -428,7 +479,7 @@ function updateCartHeader() {
     const priceDisplay = document.querySelector('.cart-prix');
     
     if (counter) counter.textContent = totalItems;
-    if (priceDisplay) priceDisplay.textContent = totalPrice.toFixed(2) + ' DNT';
+    if (priceDisplay) priceDisplay.textContent = totalPrice.toFixed(2) + ' DH';
 }
 </script>
 

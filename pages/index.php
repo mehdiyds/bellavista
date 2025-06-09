@@ -1,7 +1,7 @@
 <?php 
 include 'C:\xampp\htdocs\bellavista\includes\header.php'; 
 
-// Définir l'URL de base
+// Define base URL
 $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
 ?>
 <section class="hero">
@@ -22,7 +22,7 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
         
         <div class="categories-grid">
             <?php
-            // Connexion à la base de données
+            // Database connection
             $host = 'localhost';
             $dbname = 'bellavista';
             $username = 'root';
@@ -32,7 +32,7 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
                 $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 
-                // Récupérer les catégories
+                // Get categories
                 $stmt = $pdo->query("SELECT * FROM categories");
                 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -64,7 +64,7 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
         <p class="section-subtitle" id="category-name">Select a category to view products</p>
         
         <div class="products-grid" id="products-container">
-            <!-- Les produits seront chargés ici dynamiquement -->
+            <!-- Products will be loaded here dynamically -->
         </div>
     </div>
 </section>
@@ -82,10 +82,10 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
             <div class="product-characteristics">
                 <h3>Characteristics:</h3>
                 <ul id="characteristicsList">
-                    <!-- Les caractéristiques seront ajoutées dynamiquement -->
+                    <!-- Characteristics will be added dynamically -->
                 </ul>
             </div>
-            <span class="price" id="popupProductPrice">0.00 DH</span>
+            <span class="price" id="popupProductPrice">0.00 DNT</span>
         </div>
         <div class="popup-footer">
             <button class="cancel-btn" onclick="closePopup()">Cancel</button>
@@ -95,7 +95,7 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
 </div>
 
 <style>
-.categories-grid {
+    .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 30px;
@@ -419,16 +419,16 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
         justify-content: center;
     }
 }
-/* [Keep all your existing CSS styles exactly as they are] */
+/* [All your existing CSS styles remain unchanged] */
 </style>
 
 <script>
-// Déclaration des variables globales
+// Global variables
 const baseUrl = '<?php echo $base_url; ?>';
 let currentProduct = null;
 let currentCategoryName = '';
 
-// Fonction pour afficher les détails du produit
+// Show product details
 function showProductDetails(product) {
     document.getElementById('popupProductName').textContent = product.nom;
     document.getElementById('popupProductDescription').textContent = product.description;
@@ -456,7 +456,7 @@ function showProductDetails(product) {
             characteristicsList.appendChild(li);
         }
     } catch (e) {
-        console.error("Erreur d'analyse des caractéristiques:", e);
+        console.error("Error parsing characteristics:", e);
         const li = document.createElement('li');
         li.textContent = "Characteristics: " + (product.caracteristiques || "Not specified");
         characteristicsList.appendChild(li);
@@ -500,7 +500,7 @@ function addToCart() {
 
     localStorage.setItem('cart', JSON.stringify(cart));
     closePopup();
-    showCartNotification(`${currentProduct.name} a été ajouté à votre panier!`);
+    showCartNotification(`${currentProduct.name} added to your cart!`);
     updateCartHeader();
 }
 
@@ -509,7 +509,7 @@ function showCartNotification(message) {
     notification.className = 'cart-notification';
     notification.innerHTML = `
         <span>${message}</span>
-        <a href="panier.php">Voir le panier</a>
+        <a href="panier.php">View Cart</a>
     `;
     document.body.appendChild(notification);
     
@@ -578,7 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <h3>${product.nom}</h3>
                                 <p class="product-description">${product.description}</p>
                                 <div class="product-details">
-                                    <span class="price">${parseFloat(product.prix).toFixed(2)} DH</span>
+                                    <span class="price">${parseFloat(product.prix).toFixed(2)} DNT</span>
                                 </div>
                             </div>
                         </div>`;
