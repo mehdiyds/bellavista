@@ -5,6 +5,9 @@ $dbname = 'bellavista';
 $username = 'root';
 $password = '';
 
+// Base URL pour les images
+$base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
+
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -23,8 +26,12 @@ try {
         $stmt->execute([$produit_id]);
         
         // Supprimer le fichier image s'il existe
-        if (!empty($produit['image']) && file_exists($produit['image'])) {
-            unlink($produit['image']);
+        if (!empty($produit['image'])) {
+            // Construire le chemin absolu du fichier
+            $image_path = $_SERVER['DOCUMENT_ROOT'] . '/bellavista/' . $produit['image'];
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
         }
         
         header("Location: supprimer_produit.php?success=1");
@@ -49,6 +56,15 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Formater les chemins d'images pour l'affichage
+    foreach ($produits as &$produit) {
+        if (!empty($produit['image'])) {
+            $produit['image_display'] = $base_url . $produit['image'];
+        }
+    }
+    unset($produit);
+
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
@@ -267,8 +283,8 @@ try {
                 <?php foreach ($produits as $produit): ?>
                     <div class="product-card">
                         <div class="product-image">
-                            <?php if (!empty($produit['image']) && file_exists($produit['image'])): ?>
-                                <img src="<?= $produit['image'] ?>" alt="<?= htmlspecialchars($produit['nom']) ?>">
+                            <?php if (!empty($produit['image'])): ?>
+                                <img src="<?= $produit['image_display'] ?? '' ?>" alt="<?= htmlspecialchars($produit['nom']) ?>">
                             <?php else: ?>
                                 <span class="no-image">Image non disponible</span>
                             <?php endif; ?>
