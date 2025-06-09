@@ -91,6 +91,38 @@ include 'C:\xampp\htdocs\bellavista\includes\header.php';
     border-radius: 8px;
 }
 
+/* Quantity Controls */
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.quantity-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.quantity {
+    min-width: 20px;
+    text-align: center;
+}
+
 /* Remove Button */
 .remove-btn {
     background: none;
@@ -184,6 +216,10 @@ include 'C:\xampp\htdocs\bellavista\includes\header.php';
         margin-right: 15px;
     }
     
+    .quantity-controls {
+        margin-left: auto;
+    }
+    
     .cart-actions {
         flex-direction: column;
     }
@@ -204,12 +240,13 @@ include 'C:\xampp\htdocs\bellavista\includes\header.php';
     animation: cartItemAdded 0.5s ease;
 }
 </style>
+
 <section class="panier-section">
     <div class="container-panier">
         <h1 class="section-title">PANIER</h1>
         
         <div class="cart-controls">
-            <button id="clearCartBtn" class="clear-cart-btn">Clear Cart</button>
+            <button id="clearCartBtn" class="clear-cart-btn">Vider le panier</button>
         </div>
         
         <div class="cart-items">
@@ -263,7 +300,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Checkout button
     document.querySelector('.checkout-btn').addEventListener('click', function() {
-        // Mettre à jour la session PHP avant de rediriger
         updateCartSession();
     });
     
@@ -271,11 +307,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('clearCartBtn').addEventListener('click', clearCart);
 });
 
-// Mettre à jour la session PHP avec le panier actuel
 function updateCartSession() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     
-    // Créer un formulaire dynamique pour envoyer les données au serveur
+    // Create dynamic form to send data to server
     const form = document.createElement('form');
     form.method = 'post';
     form.action = 'update_cart_session.php';
@@ -289,7 +324,7 @@ function updateCartSession() {
     form.appendChild(input);
     document.body.appendChild(form);
     
-    // Soumettre le formulaire
+    // Submit the form
     form.submit();
 }
 
@@ -312,10 +347,21 @@ function loadCartItems() {
                 <img src="${productImages[item.name] || 'https://via.placeholder.com/50'}" alt="${item.name}" class="product-image">
             </td>
             <td>${item.price} DNT</td>
-            <td>${item.quantity}</td>
+            <td>
+                <div class="quantity-controls">
+                    <button class="quantity-btn minus" data-index="${index}">-</button>
+                    <span class="quantity">${item.quantity}</span>
+                    <button class="quantity-btn plus" data-index="${index}">+</button>
+                </div>
+            </td>
             <td>${itemTotal} DNT</td>
             <td><button class="remove-btn" data-index="${index}">✕</button></td>
         `;
+        
+        if (index === cart.length - 1) {
+            row.classList.add('cart-item-added');
+        }
+        
         cartItemsBody.appendChild(row);
     });
     
@@ -328,61 +374,72 @@ function loadCartItems() {
             removeFromCart(index);
         });
     });
+    
+    // Add event listeners to quantity buttons
+    document.querySelectorAll('.quantity-btn.minus').forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            updateQuantity(index, -1);
+        });
+    });
+    
+    document.querySelectorAll('.quantity-btn.plus').forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            updateQuantity(index, 1);
+        });
+    });
+}
+
+function updateQuantity(index, change) {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    if (cart[index]) {
+        cart[index].quantity += change;
+        
+        // Remove item if quantity reaches 0
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartHeader(cart);
+        loadCartItems();
+    }
 }
 
 function removeFromCart(index) {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const removedItem = cart.splice(index, 1)[0];
+    cart.splice(index, 1);
     
-    // CORRECTION : Ne pas mettre à jour la session ici
-    // Juste mettre à jour le localStorage et l'affichage
-    
-    // Update localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartHeader(cart);
     loadCartItems();
-    
-    // Show animation
-    const button = document.querySelector(`.remove-btn[data-index="${index}"]`);
-    if (button) {
-        button.textContent = '-1';
-        button.style.color = 'red';
-        setTimeout(() => {
-            button.textContent = '✕';
-            button.style.color = '';
-        }, 1000);
-    }
-    
-    // CORRECTION : Ne pas appeler updateCartSession() ici
-    // On synchronise uniquement au moment du checkout
 }
 
 function clearCart() {
     // Show confirmation dialog
-    const confirmed = confirm("Are you sure you want to clear your cart? This cannot be undone.");
+    const confirmed = confirm("Êtes-vous sûr de vouloir vider votre panier ? Cette action est irréversible.");
     
     if (confirmed) {
         // Clear all cart data
         localStorage.removeItem('cart');
-        localStorage.removeItem('cartCount');
-        localStorage.removeItem('cartTotal');
         
         // Update header
-        document.querySelector('.cart-count').textContent = '0';
-        document.querySelector('.cart-prix').textContent = '0 DNT';
+        updateCartHeader([]);
         
         // Reload cart items
         loadCartItems();
         
         // Show visual feedback
         const btn = document.getElementById('clearCartBtn');
-        btn.innerHTML = '<i class="fas fa-check"></i> Cart Cleared!';
-        btn.style.backgroundColor = '#4CAF50'; /* Green for success */
+        btn.innerHTML = '<i class="fas fa-check"></i> Panier vidé !';
+        btn.style.backgroundColor = '#4CAF50';
         
         // Reset button after 2 seconds
         setTimeout(() => {
-            btn.innerHTML = '<i class="fas fa-recycle"></i> Clear Cart';
-            btn.style.backgroundColor = 'var(--accent-color)';
+            btn.innerHTML = '<i class="fas fa-trash"></i> Vider le panier';
+            btn.style.backgroundColor = '#e74c3c';
         }, 2000);
     }
 }
@@ -398,12 +455,16 @@ function updateCartHeader(cart) {
     });
     
     // Update header
-    document.querySelector('.cart-count').textContent = count;
-    document.querySelector('.cart-prix').textContent = total.toFixed(2) + ' DNT';
+    const cartCountElement = document.querySelector('.cart-count');
+    const cartPriceElement = document.querySelector('.cart-prix');
+    
+    if (cartCountElement) cartCountElement.textContent = count;
+    if (cartPriceElement) cartPriceElement.textContent = total.toFixed(2) + ' DNT';
     
     // Save to localStorage
     localStorage.setItem('cartCount', count);
     localStorage.setItem('cartTotal', total.toFixed(2));
 }
 </script>
+
 <?php include 'C:\xampp\htdocs\bellavista\includes\footer.php'; ?>
