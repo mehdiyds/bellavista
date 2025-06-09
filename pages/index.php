@@ -441,10 +441,11 @@ function showProductDetails(product) {
     const characteristicsList = document.getElementById('characteristicsList');
     characteristicsList.innerHTML = '';
     
+    let characteristics = {};
     try {
         if (product.caracteristiques && product.caracteristiques.startsWith('{')) {
-            const charObj = JSON.parse(product.caracteristiques);
-            for (const [key, value] of Object.entries(charObj)) {
+            characteristics = JSON.parse(product.caracteristiques);
+            for (const [key, value] of Object.entries(characteristics)) {
                 const li = document.createElement('li');
                 li.innerHTML = `<strong>${key}:</strong> <span>${value}</span>`;
                 characteristicsList.appendChild(li);
@@ -464,38 +465,100 @@ function showProductDetails(product) {
     document.getElementById('productPopup').style.display = 'flex';
     
     currentProduct = {
-        id: product.id_prod,
+        id: product.produit_id,
         name: product.nom,
-        description: product.description,
         price: parseFloat(product.prix),
-        image: baseUrl + product.image,
-        characteristics: product.caracteristiques
+        image: product.image,
+        characteristics: characteristics
     };
-}
-
-function closePopup() {
+}function closePopup() {
     document.getElementById('productPopup').style.display = 'none';
 }
 
 function addToCart() {
+    console.log("Current Product:", currentProduct);
     if (!currentProduct) return;
-    
+
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const existingProductIndex = cart.findIndex(item => item.id === currentProduct.id);
     
+    // Utilisez simplement l'ID si c'est vraiment unique
+    const productUniqueId = currentProduct.id;
+    alert(productUniqueId);
+    
+    // Vérifier si le produit existe déjà dans le panier
+    const existingProductIndex = cart.findIndex(item => 
+        item.id === productUniqueId  // Comparer avec item.id au lieu de item.uniqueId
+    );
+
     if (existingProductIndex >= 0) {
-        cart[existingProductIndex].quantity = (cart[existingProductIndex].quantity || 1) + 1;
+        // Produit existe déjà - incrémenter la quantité
+        cart[existingProductIndex].quantity += 1;
     } else {
-        currentProduct.quantity = 1;
-        cart.push(currentProduct);
+        // Nouveau produit - ajouter au panier
+        const productToAdd = {
+            id: currentProduct.id, // Utilisez simplement id comme identifiant
+            name: currentProduct.name,
+            price: currentProduct.price,
+            image: currentProduct.image,
+            characteristics: currentProduct.characteristics || [],
+            quantity: 1
+        };
+        cart.push(productToAdd);
     }
-    
+
     localStorage.setItem('cart', JSON.stringify(cart));
     closePopup();
-    alert(`${currentProduct.name} has been added to your cart!`);
+
+    // Afficher notification
+    showCartNotification(`${currentProduct.name} a été ajouté à votre panier!`);
     updateCartCounter();
 }
-
+function showCartNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'cart-notification';
+    notification.innerHTML = `
+        <span>${message}</span>
+        <a href="panier.php">Voir le panier</a>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.classList.add('show'), 10);
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => document.body.removeChild(notification), 300);
+    }, 3000);
+}
+// Ajouter ce style pour la notification
+const style = document.createElement('style');
+style.textContent = `
+.cart-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2ecc71;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+.cart-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+.cart-notification a {
+    color: white;
+    text-decoration: underline;
+    font-weight: bold;
+}
+`;
+document.head.appendChild(style);
 function updateCartCounter() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const counter = document.getElementById('cart-counter');

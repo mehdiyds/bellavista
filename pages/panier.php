@@ -1,10 +1,73 @@
 <?php 
 session_start();
 include 'C:\xampp\htdocs\bellavista\includes\header.php'; 
+
+// Synchroniser le panier avec la session PHP
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
+    $cartData = json_decode($_POST['cart_data'], true);
+    
+    // Valider et nettoyer les données du panier
+    $_SESSION['cart'] = [];
+    if (is_array($cartData)) {
+        foreach ($cartData as $item) {
+            if (isset($item['id'], $item['name'], $item['price'], $item['quantity']) && 
+                is_numeric($item['id']) && is_numeric($item['price']) && is_numeric($item['quantity'])) {
+                $cleanItem = [
+                    'id' => (int)$item['id'],
+                    'name' => htmlspecialchars($item['name']),
+                    'price' => (float)$item['price'],
+                    'quantity' => (int)$item['quantity'],
+                    'image' => isset($item['image']) ? htmlspecialchars($item['image']) : 'uploads/default.jpg',
+                    'characteristics' => isset($item['characteristics']) && is_array($item['characteristics']) ? 
+                                        $item['characteristics'] : []
+                ];
+                $_SESSION['cart'][] = $cleanItem;
+            }
+        }
+    }
+}
 ?>
 
+<form id="cartForm" method="post" action="panier.php" style="display: none;">
+    <input type="hidden" name="cart_data" id="cartDataInput">
+</form>
 <style>
     /* === Panier Page Styles === */
+
+/* Ajouter dans la section style */
+input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.cart-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.cart-table a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.cart-table a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 .panier-section {
     padding: 60px 0;
     background-color: var(--light-color);
@@ -242,56 +305,22 @@ include 'C:\xampp\htdocs\bellavista\includes\header.php';
 </section>
 
 <script>
-// Product images mapping
-const productImages = {
-    'Espresso': 'https://cdn.pixabay.com/photo/2018/10/19/16/47/coffee-3759024_640.jpg',
-    'Cappuccino': 'https://www.polobar.co.uk/cdn/shop/products/Cappuccino.jpg?v=1671112378&width=1946',
-    'Latte': 'https://media.istockphoto.com/id/183138035/photo/cup-of-latte-coffee-and-spoon-on-gray-counter.jpg?s=612x612&w=0&k=20&c=Iht-hG2bzxiZgpjao6RELKAbw4oG7ujS2wQNkiM2rqU=',
-    'Iced Latte': 'https://t4.ftcdn.net/jpg/06/53/78/73/360_F_653787364_RSq2W0SuSzTB4G8owzSmkGkEZdy6s4ud.jpg',
-    'Herbal Tea': 'https://t4.ftcdn.net/jpg/01/98/93/59/360_F_198935939_rvUXMPDkMfSE66I4tDXG5qu7ghhBZr7H.jpg',
-    'Matcha Latte': 'https://t4.ftcdn.net/jpg/11/94/69/21/360_F_1194692177_3gh4pLuz0NlbFBNSQu50YhsOw8A1NlhU.jpg'
-};
+// Base URL for images
+const baseUrl = '<?php echo "http://".$_SERVER['HTTP_HOST']."/bellavista/"; ?>';
 
-// Load cart from localStorage and update session
 document.addEventListener('DOMContentLoaded', function() {
     loadCartItems();
     
-    // Continue shopping button
     document.querySelector('.continue-btn').addEventListener('click', function() {
         window.location.href = 'index.php';
     });
     
-    // Checkout button
     document.querySelector('.checkout-btn').addEventListener('click', function() {
-        // Mettre à jour la session PHP avant de rediriger
         updateCartSession();
     });
     
-    // Clear cart button
     document.getElementById('clearCartBtn').addEventListener('click', clearCart);
 });
-
-// Mettre à jour la session PHP avec le panier actuel
-function updateCartSession() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-    // Créer un formulaire dynamique pour envoyer les données au serveur
-    const form = document.createElement('form');
-    form.method = 'post';
-    form.action = 'update_cart_session.php';
-    form.style.display = 'none';
-    
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'cart_data';
-    input.value = JSON.stringify(cart);
-    
-    form.appendChild(input);
-    document.body.appendChild(form);
-    
-    // Soumettre le formulaire
-    form.submit();
-}
 
 function loadCartItems() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -301,109 +330,102 @@ function loadCartItems() {
     
     cartItemsBody.innerHTML = '';
     
+    if (cart.length === 0) {
+        cartItemsBody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px;">
+                    Votre panier est vide. <a href="index.php">Continuer vos achats</a>
+                </td>
+            </tr>
+        `;
+        cartTotalElement.textContent = '0.00 DH';
+        return;
+    }
+    
     cart.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
+        // Assurer que l'item a toutes les propriétés nécessaires avec des valeurs par défaut
+        const safeItem = {
+            id: item.id || 0,
+            name: item.name || 'Produit sans nom',
+            price: parseFloat(item.price) || 0,
+            quantity: parseInt(item.quantity) || 1,
+            image: item.image ? baseUrl + item.image : baseUrl + 'uploads/default.jpg',
+            characteristics: item.characteristics || {}
+        };
+        
+        const itemTotal = safeItem.price * safeItem.quantity;
         total += itemTotal;
         
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${item.name}</td>
-            <td class="product-image-cell">
-                <img src="${productImages[item.name] || 'https://via.placeholder.com/50'}" alt="${item.name}" class="product-image">
+            <td data-label="Produit">${safeItem.name}</td>
+            <td data-label="Image" class="product-image-cell">
+                <img src="${safeItem.image}" 
+                     alt="${safeItem.name}" class="product-image"
+                     onerror="this.src='${baseUrl}uploads/default.jpg'">
             </td>
-            <td>${item.price} DNT</td>
-            <td>${item.quantity}</td>
-            <td>${itemTotal} DNT</td>
-            <td><button class="remove-btn" data-index="${index}">✕</button></td>
+            <td data-label="Prix">${safeItem.price.toFixed(2)} DH</td>
+            <td data-label="Quantité">
+                <input type="number" min="1" value="${safeItem.quantity}" 
+                       onchange="updateQuantity(${index}, this.value)">
+            </td>
+            <td data-label="Total">${itemTotal.toFixed(2)} DH</td>
+            <td data-label="Action">
+                <button class="remove-btn" onclick="removeFromCart(${index})">✕</button>
+            </td>
         `;
         cartItemsBody.appendChild(row);
     });
     
-    cartTotalElement.textContent = total + ' DNT';
+    cartTotalElement.textContent = total.toFixed(2) + ' DH';
+    updateCartHeader();
+}
+
+function updateQuantity(index, newQuantity) {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    newQuantity = parseInt(newQuantity);
     
-    // Add event listeners to remove buttons
-    document.querySelectorAll('.remove-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const index = parseInt(this.getAttribute('data-index'));
-            removeFromCart(index);
-        });
-    });
+    if (index >= 0 && index < cart.length && newQuantity > 0) {
+        cart[index].quantity = newQuantity;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCartItems();
+    } else if (newQuantity <= 0) {
+        removeFromCart(index);
+    }
 }
 
 function removeFromCart(index) {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const removedItem = cart.splice(index, 1)[0];
-    
-    // CORRECTION : Ne pas mettre à jour la session ici
-    // Juste mettre à jour le localStorage et l'affichage
-    
-    // Update localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartHeader(cart);
-    loadCartItems();
-    
-    // Show animation
-    const button = document.querySelector(`.remove-btn[data-index="${index}"]`);
-    if (button) {
-        button.textContent = '-1';
-        button.style.color = 'red';
-        setTimeout(() => {
-            button.textContent = '✕';
-            button.style.color = '';
-        }, 1000);
+    if (index >= 0 && index < cart.length) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCartItems();
+        updateCartHeader();
     }
-    
-    // CORRECTION : Ne pas appeler updateCartSession() ici
-    // On synchronise uniquement au moment du checkout
 }
 
 function clearCart() {
-    // Show confirmation dialog
-    const confirmed = confirm("Are you sure you want to clear your cart? This cannot be undone.");
-    
-    if (confirmed) {
-        // Clear all cart data
+    if (confirm('Êtes-vous sûr de vouloir vider votre panier ?')) {
         localStorage.removeItem('cart');
-        localStorage.removeItem('cartCount');
-        localStorage.removeItem('cartTotal');
-        
-        // Update header
-        document.querySelector('.cart-count').textContent = '0';
-        document.querySelector('.cart-prix').textContent = '0 DNT';
-        
-        // Reload cart items
         loadCartItems();
-        
-        // Show visual feedback
-        const btn = document.getElementById('clearCartBtn');
-        btn.innerHTML = '<i class="fas fa-check"></i> Cart Cleared!';
-        btn.style.backgroundColor = '#4CAF50'; /* Green for success */
-        
-        // Reset button after 2 seconds
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fas fa-recycle"></i> Clear Cart';
-            btn.style.backgroundColor = 'var(--accent-color)';
-        }, 2000);
+        updateCartHeader();
     }
 }
 
-function updateCartHeader(cart) {
-    // Calculate total count and price
-    let count = 0;
-    let total = 0;
-    
-    cart.forEach(item => {
-        count += item.quantity;
-        total += item.price * item.quantity;
-    });
-    
-    // Update header
-    document.querySelector('.cart-count').textContent = count;
-    document.querySelector('.cart-prix').textContent = total.toFixed(2) + ' DNT';
-    
-    // Save to localStorage
-    localStorage.setItem('cartCount', count);
-    localStorage.setItem('cartTotal', total.toFixed(2));
+function updateCartSession() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    document.getElementById('cartDataInput').value = JSON.stringify(cart);
+    document.getElementById('cartForm').submit();
+}
+
+function updateCartHeader() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const counter = document.getElementById('cart-counter');
+    if (counter) {
+        counter.textContent = totalItems;
+    }
 }
 </script>
+
 <?php include 'C:\xampp\htdocs\bellavista\includes\footer.php'; ?>
