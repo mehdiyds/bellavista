@@ -107,17 +107,6 @@ try {
             border-radius: 4px;
             font-size: 16px;
         }
-        .search-button {
-            padding: 10px 15px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .search-button:hover {
-            background-color: #2980b9;
-        }
         .reset-search {
             padding: 10px 15px;
             background-color: #95a5a6;
@@ -205,6 +194,42 @@ try {
             color: #666;
         }
     </style>
+    <script>
+        // Fonction pour la recherche dynamique
+        function performSearch() {
+            const searchInput = document.querySelector('.search-input');
+            const searchTerm = searchInput.value.trim();
+            const currentUrl = new URL(window.location.href);
+            
+            if (searchTerm) {
+                currentUrl.searchParams.set('search', searchTerm);
+            } else {
+                currentUrl.searchParams.delete('search');
+            }
+            
+            window.location.href = currentUrl.toString();
+        }
+        
+        // Délai pour éviter des requêtes excessives
+        let searchTimer;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(performSearch, 500); // 500ms de délai
+            });
+            
+            // Permettre la soumission avec Entrée
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    clearTimeout(searchTimer);
+                    performSearch();
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -217,15 +242,14 @@ try {
             </div>
         <?php endif; ?>
 
-        <form method="GET" class="search-container">
+        <div class="search-container">
             <input type="text" name="search" class="search-input" 
                    placeholder="Rechercher par nom ou description" 
                    value="<?= htmlspecialchars($search) ?>">
-            <button type="submit" class="search-button">Rechercher</button>
             <?php if (!empty($search)): ?>
                 <a href="supprimer_categorie.php" class="reset-search">Réinitialiser</a>
             <?php endif; ?>
-        </form>
+        </div>
 
         <div class="categories-grid">
             <?php if (!empty($categories) && is_array($categories)): ?>

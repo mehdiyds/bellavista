@@ -31,10 +31,23 @@ try {
         exit();
     }
 
-    // Récupérer tous les produits avec leurs catégories
-    $stmt = $pdo->query("SELECT p.*, c.nom AS categorie_nom 
-                         FROM produits p 
-                         JOIN categories c ON p.id_cat = c.id_cat");
+    // Récupérer les produits avec possibilité de recherche
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    
+    $sql = "SELECT p.*, c.nom AS categorie_nom 
+            FROM produits p 
+            JOIN categories c ON p.id_cat = c.id_cat";
+    
+    $params = [];
+    
+    if (!empty($search)) {
+        $sql .= " WHERE p.nom LIKE ? OR p.description LIKE ? OR c.nom LIKE ?";
+        $searchTerm = '%' . $search . '%';
+        $params = [$searchTerm, $searchTerm, $searchTerm];
+    }
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
@@ -65,6 +78,29 @@ try {
         h1 {
             color: #333;
             text-align: center;
+        }
+        .search-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .search-input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .reset-search {
+            padding: 10px 15px;
+            background-color: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .reset-search:hover {
+            background-color: #7f8c8d;
         }
         .products-grid {
             display: grid;
@@ -162,7 +198,49 @@ try {
             color: #999;
             font-style: italic;
         }
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
     </style>
+    <script>
+        // Fonction pour la recherche dynamique
+        function performSearch() {
+            const searchInput = document.querySelector('.search-input');
+            const searchTerm = searchInput.value.trim();
+            const currentUrl = new URL(window.location.href);
+            
+            if (searchTerm) {
+                currentUrl.searchParams.set('search', searchTerm);
+            } else {
+                currentUrl.searchParams.delete('search');
+            }
+            
+            window.location.href = currentUrl.toString();
+        }
+        
+        // Délai pour éviter des requêtes excessives
+        let searchTimer;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(performSearch, 500); // 500ms de délai
+            });
+            
+            // Permettre la soumission avec Entrée
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    clearTimeout(searchTimer);
+                    performSearch();
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -174,6 +252,15 @@ try {
                 Produit supprimé avec succès!
             </div>
         <?php endif; ?>
+
+        <div class="search-container">
+            <input type="text" name="search" class="search-input" 
+                   placeholder="Rechercher par nom, description ou catégorie" 
+                   value="<?= htmlspecialchars($search) ?>">
+            <?php if (!empty($search)): ?>
+                <a href="supprimer_produit.php" class="reset-search">Réinitialiser</a>
+            <?php endif; ?>
+        </div>
 
         <div class="products-grid">
             <?php if (count($produits) > 0): ?>
@@ -201,7 +288,9 @@ try {
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p>Aucun produit disponible.</p>
+                <p class="no-results">
+                    <?= empty($search) ? 'Aucun produit disponible.' : 'Aucun résultat trouvé pour "' . htmlspecialchars($search) . '"' ?>
+                </p>
             <?php endif; ?>
         </div>
     </div>
