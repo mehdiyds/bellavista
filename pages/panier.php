@@ -421,10 +421,14 @@ function updateCartSession() {
 function updateCartHeader() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    const counter = document.getElementById('cart-counter');
-    if (counter) {
-        counter.textContent = totalItems;
-    }
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
+    
+    // Update both the page counter and header counter
+    const counter = document.querySelector('.cart-count');
+    const priceDisplay = document.querySelector('.cart-prix');
+    
+    if (counter) counter.textContent = totalItems;
+    if (priceDisplay) priceDisplay.textContent = totalPrice.toFixed(2) + ' DNT';
 }
 </script>
 

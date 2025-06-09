@@ -8,20 +8,20 @@
     <link rel="stylesheet" href="style.css">
     <script src="control.js"></script>
     <script>
-        // Load cart data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedCount = localStorage.getItem('cartCount');
-            const savedTotal = localStorage.getItem('cartTotal');
-            
-            if (savedCount) {
-                document.querySelector('.cart-count').textContent = savedCount;
-            }
-            
-            if (savedTotal) {
-                document.querySelector('.cart-prix').textContent = savedTotal + ' DNT';
-            }
-        });
-    </script>
+    // Replace the existing script with this minimal version
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCartHeader();
+    });
+
+    function updateCartHeader() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
+        
+        document.querySelector('.cart-count').textContent = totalItems;
+        document.querySelector('.cart-prix').textContent = totalPrice.toFixed(2) + ' DNT';
+    }
+</script>
 </head>
 <body>
     <header>

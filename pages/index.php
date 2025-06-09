@@ -95,8 +95,6 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
 </div>
 
 <style>
-/* Styles généraux */
-/* Styles des catégories */
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -420,7 +418,9 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
     .popup-footer {
         justify-content: center;
     }
-}</style>
+}
+/* [Keep all your existing CSS styles exactly as they are] */
+</style>
 
 <script>
 // Déclaration des variables globales
@@ -432,7 +432,7 @@ let currentCategoryName = '';
 function showProductDetails(product) {
     document.getElementById('popupProductName').textContent = product.nom;
     document.getElementById('popupProductDescription').textContent = product.description;
-    document.getElementById('popupProductPrice').textContent = parseFloat(product.prix).toFixed(2) + ' DH';
+    document.getElementById('popupProductPrice').textContent = parseFloat(product.prix).toFixed(2) + ' DNT';
     
     const imgElement = document.getElementById('popupProductImage');
     imgElement.src = baseUrl + product.image;
@@ -471,36 +471,28 @@ function showProductDetails(product) {
         image: product.image,
         characteristics: characteristics
     };
-}function closePopup() {
+}
+
+function closePopup() {
     document.getElementById('productPopup').style.display = 'none';
 }
 
 function addToCart() {
-    console.log("Current Product:", currentProduct);
     if (!currentProduct) return;
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     
-    // Utilisez simplement l'ID si c'est vraiment unique
-    const productUniqueId = currentProduct.id;
-    alert(productUniqueId);
-    
-    // Vérifier si le produit existe déjà dans le panier
-    const existingProductIndex = cart.findIndex(item => 
-        item.id === productUniqueId  // Comparer avec item.id au lieu de item.uniqueId
-    );
+    const existingProductIndex = cart.findIndex(item => item.id === currentProduct.id);
 
     if (existingProductIndex >= 0) {
-        // Produit existe déjà - incrémenter la quantité
         cart[existingProductIndex].quantity += 1;
     } else {
-        // Nouveau produit - ajouter au panier
         const productToAdd = {
-            id: currentProduct.id, // Utilisez simplement id comme identifiant
+            id: currentProduct.id,
             name: currentProduct.name,
             price: currentProduct.price,
             image: currentProduct.image,
-            characteristics: currentProduct.characteristics || [],
+            characteristics: currentProduct.characteristics || {},
             quantity: 1
         };
         cart.push(productToAdd);
@@ -508,11 +500,10 @@ function addToCart() {
 
     localStorage.setItem('cart', JSON.stringify(cart));
     closePopup();
-
-    // Afficher notification
     showCartNotification(`${currentProduct.name} a été ajouté à votre panier!`);
-    updateCartCounter();
+    updateCartHeader();
 }
+
 function showCartNotification(message) {
     const notification = document.createElement('div');
     notification.className = 'cart-notification';
@@ -528,44 +519,17 @@ function showCartNotification(message) {
         setTimeout(() => document.body.removeChild(notification), 300);
     }, 3000);
 }
-// Ajouter ce style pour la notification
-const style = document.createElement('style');
-style.textContent = `
-.cart-notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #2ecc71;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 5px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    transform: translateY(100px);
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-.cart-notification.show {
-    transform: translateY(0);
-    opacity: 1;
-}
-.cart-notification a {
-    color: white;
-    text-decoration: underline;
-    font-weight: bold;
-}
-`;
-document.head.appendChild(style);
-function updateCartCounter() {
+
+function updateCartHeader() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const counter = document.getElementById('cart-counter');
-    if (counter) {
-        const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        counter.textContent = totalItems;
-    }
+    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
+    
+    const counter = document.querySelector('.cart-count');
+    const priceDisplay = document.querySelector('.cart-prix');
+    
+    if (counter) counter.textContent = totalItems;
+    if (priceDisplay) priceDisplay.textContent = totalPrice.toFixed(2) + ' DNT';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -630,7 +594,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
     
-    updateCartCounter();
+    updateCartHeader();
 });
 </script>
 

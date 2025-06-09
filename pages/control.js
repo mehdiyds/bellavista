@@ -108,23 +108,17 @@ function showDrinkDetails(name, description, price, imageUrl) {
     localStorage.setItem('cartTotal', newTotal.toFixed(2));
 }
 function addToCart() {
-    const drinkName = document.getElementById('popupDrinkName').textContent;
-    const drinkPrice = parseFloat(document.getElementById('popupDrinkPrice').textContent.replace('$', ''));
+    // ... keep your existing code ...
     
-    // Get or create cart
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-    // Check if item already exists in cart
-    const existingItem = cart.find(item => item.name === drinkName);
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({
-            name: drinkName,
-            price: drinkPrice,
-            quantity: 1
-        });
-    }
+    // When adding new item, include these required fields:
+    cart.push({
+        id: Date.now(),  // Required by panier.php
+        name: drinkName,
+        price: drinkPrice,
+        quantity: 1,
+        image: 'uploads/default.jpg',  // Required by panier.php
+        characteristics: {}  // Required by panier.php
+    });
     
     // Save cart
     localStorage.setItem('cart', JSON.stringify(cart));
