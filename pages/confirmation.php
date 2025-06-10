@@ -247,11 +247,8 @@ $is_new_client = isset($_SESSION['is_new_client']) ? $_SESSION['is_new_client'] 
             </div>
             
             <div class="action-buttons">
-                <a href="../index.php" class="action-btn home-btn">
+                <a href="index.php" class="action-btn home-btn">
                     <i class="fas fa-home"></i> Retour à l'accueil
-                </a>
-                <a href="../pages/menu.php" class="action-btn order-btn">
-                    <i class="fas fa-utensils"></i> Nouvelle commande
                 </a>
             </div>
             

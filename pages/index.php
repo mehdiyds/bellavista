@@ -420,6 +420,37 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
     }
 }
 /* [All your existing CSS styles remain unchanged] */
+
+
+.cart-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #2ecc71;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1001;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.cart-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.cart-notification a {
+    color: white;
+    text-decoration: underline;
+    font-weight: bold;
+    margin-left: 10px;
+}
 </style>
 
 <script>
@@ -500,7 +531,7 @@ function addToCart() {
 
     localStorage.setItem('cart', JSON.stringify(cart));
     closePopup();
-    showCartNotification(`${currentProduct.name} added to your cart!`);
+    showCartNotification(`${currentProduct.name} a été ajouté à votre panier!`);
     updateCartHeader();
 }
 
@@ -509,7 +540,7 @@ function showCartNotification(message) {
     notification.className = 'cart-notification';
     notification.innerHTML = `
         <span>${message}</span>
-        <a href="panier.php">View Cart</a>
+        <a href="panier.php">Voir le panier</a>
     `;
     document.body.appendChild(notification);
     
