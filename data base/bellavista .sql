@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 07, 2025 at 10:42 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Hôte : 127.0.0.1
+-- Généré le : mar. 10 juin 2025 à 18:35
+-- Version du serveur : 10.4.32-MariaDB
+-- Version de PHP : 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `bellavista`
+-- Base de données : `bellavista`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `categories`
+-- Structure de la table `categories`
 --
 
 CREATE TABLE `categories` (
@@ -35,7 +35,7 @@ CREATE TABLE `categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `categories`
+-- Déchargement des données de la table `categories`
 --
 
 INSERT INTO `categories` (`id_cat`, `nom`, `description`, `image`) VALUES
@@ -45,7 +45,7 @@ INSERT INTO `categories` (`id_cat`, `nom`, `description`, `image`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `clients`
+-- Structure de la table `clients`
 --
 
 CREATE TABLE `clients` (
@@ -56,17 +56,20 @@ CREATE TABLE `clients` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `clients`
+-- Déchargement des données de la table `clients`
 --
 
 INSERT INTO `clients` (`client_id`, `nom`, `telephone`, `adresse`) VALUES
 (5, 'mehdi yedes', '95845834', 'RUE OMKALTHOUM'),
-(6, 'cghjk', '7876', 'RUE OMKALTHOUM');
+(6, 'cghjk', '7876', 'RUE OMKALTHOUM'),
+(7, 'yassine ', '23444555', 'korba'),
+(8, 'yassine ', '234567555', 'korba'),
+(9, 'nassim', '24555577', 'korba ');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `commandes`
+-- Structure de la table `commandes`
 --
 
 CREATE TABLE `commandes` (
@@ -81,10 +84,19 @@ CREATE TABLE `commandes` (
   `commande` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `commandes`
+--
+
+INSERT INTO `commandes` (`commande_id`, `client_id`, `date_commande`, `montant_total`, `montant_paye`, `statut`, `notes`, `commande`) VALUES
+(1234567896, 7, '2025-06-09 20:40:22', 27.50, 27.50, 'en livraison', NULL, '5 Latte + 1 Herbal Tea'),
+(1234567897, 8, '2025-06-09 20:41:40', 27.50, 27.50, 'en livraison', NULL, '5 Latte + 1 Herbal Tea'),
+(1234567898, 9, '2025-06-10 18:27:26', 23.00, 23.00, 'en livraison', NULL, '1 makloub + 1 pizza + 1 coffe');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `details_commandes`
+-- Structure de la table `details_commandes`
 --
 
 CREATE TABLE `details_commandes` (
@@ -95,10 +107,19 @@ CREATE TABLE `details_commandes` (
   `prix_unitaire` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `details_commandes`
+--
+
+INSERT INTO `details_commandes` (`detail_id`, `commande_id`, `produit_id`, `quantite`, `prix_unitaire`) VALUES
+(1, 1234567898, 36, 1, 9.00),
+(2, 1234567898, 32, 1, 10.00),
+(3, 1234567898, 34, 1, 4.00);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `historique_commandes`
+-- Structure de la table `historique_commandes`
 --
 
 CREATE TABLE `historique_commandes` (
@@ -116,7 +137,7 @@ CREATE TABLE `historique_commandes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `historique_commandes`
+-- Déchargement des données de la table `historique_commandes`
 --
 
 INSERT INTO `historique_commandes` (`historique_id`, `commande_id`, `client_id`, `date_commande`, `montant_total`, `montant_paye`, `statut`, `notes`, `commande`, `date_archivage`) VALUES
@@ -126,7 +147,7 @@ INSERT INTO `historique_commandes` (`historique_id`, `commande_id`, `client_id`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `livraisons`
+-- Structure de la table `livraisons`
 --
 
 CREATE TABLE `livraisons` (
@@ -137,10 +158,19 @@ CREATE TABLE `livraisons` (
   `statut` enum('assignée','en cours','livrée','annulée') DEFAULT 'assignée'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `livraisons`
+--
+
+INSERT INTO `livraisons` (`livraison_id`, `commande_id`, `livreur_id`, `date_assignation`, `statut`) VALUES
+(10, 1234567897, 4, '2025-06-09 20:42:06', 'assignée'),
+(11, 1234567896, 4, '2025-06-09 20:42:06', 'assignée'),
+(12, 1234567898, 5, '2025-06-10 18:28:41', 'assignée');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `livreurs`
+-- Structure de la table `livreurs`
 --
 
 CREATE TABLE `livreurs` (
@@ -153,21 +183,21 @@ CREATE TABLE `livreurs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `livreurs`
+-- Déchargement des données de la table `livreurs`
 --
 
 INSERT INTO `livreurs` (`livreur_id`, `nom`, `prenom`, `telephone`, `statut`, `mdp`) VALUES
 (1, 'km,n', 'nassim', '26719771', 'indisponible', '123456'),
 (2, 'TAHER', 'TAHAN', '23456789', 'indisponible', 'AZE'),
 (3, 'MTARRR', 'ZDCQS', '3456789', 'en livraison', 'AZERTYU'),
-(4, 'YEDES', 'TAHER', '96544234', 'disponible', '123456789'),
-(5, 'mtar', 'rayane', '23456788', 'disponible', '123'),
+(4, 'YEDES', 'TAHER', '96544234', 'en livraison', '123456789'),
+(5, 'mtar', 'rayane', '23456788', 'en livraison', '123'),
 (12, 'MAHMOUD', 'JKL', '123456', 'indisponible', 'QSDF');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `produits`
+-- Structure de la table `produits`
 --
 
 CREATE TABLE `produits` (
@@ -181,19 +211,41 @@ CREATE TABLE `produits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `produits`
+-- Déchargement des données de la table `produits`
 --
 
 INSERT INTO `produits` (`produit_id`, `nom`, `description`, `prix`, `id_cat`, `caracteristiques`, `image`) VALUES
 (32, 'pizza', 'delicieuse\\r\\nmeuilleur prix', 10.00, 37, 'taille: medium', 'uploads/produits/pizzza.png'),
-(33, 'coffee', 'meuilleur bon en tunisie', 3.00, 36, 'bien seré', 'uploads/produits/coffee.png');
+(34, 'coffe', 'bien serreé', 4.00, 36, 'bien serré', 'uploads/produits/137-71810.png'),
+(35, 'coffe', 'bien serreé', 4.00, 36, 'bien serré', 'uploads/produits/137-71810.png'),
+(36, 'makloub', 'bniiin', 9.00, 37, 'taille:grand', 'uploads/produits/makloub.png');
+
+-- --------------------------------------------------------
 
 --
--- Indexes for dumped tables
+-- Structure de la table `reservations`
+--
+
+CREATE TABLE `reservations` (
+  `reservation_id` int(11) NOT NULL,
+  `nom` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `telephone` varchar(20) NOT NULL,
+  `nombre_personnes` int(11) NOT NULL,
+  `date_reservation` date NOT NULL,
+  `heure_reservation` time NOT NULL,
+  `type_table` varchar(50) NOT NULL,
+  `demandes_speciales` text DEFAULT NULL,
+  `date_creation` datetime DEFAULT current_timestamp(),
+  `statut` enum('confirmée','annulée','terminée') DEFAULT 'confirmée'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Index pour les tables déchargées
 --
 
 --
--- Indexes for table `categories`
+-- Index pour la table `categories`
 --
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id_cat`),
@@ -201,20 +253,20 @@ ALTER TABLE `categories`
   ADD UNIQUE KEY `unique_nom` (`nom`);
 
 --
--- Indexes for table `clients`
+-- Index pour la table `clients`
 --
 ALTER TABLE `clients`
   ADD PRIMARY KEY (`client_id`);
 
 --
--- Indexes for table `commandes`
+-- Index pour la table `commandes`
 --
 ALTER TABLE `commandes`
   ADD PRIMARY KEY (`commande_id`),
   ADD KEY `client_id` (`client_id`);
 
 --
--- Indexes for table `details_commandes`
+-- Index pour la table `details_commandes`
 --
 ALTER TABLE `details_commandes`
   ADD PRIMARY KEY (`detail_id`),
@@ -222,14 +274,14 @@ ALTER TABLE `details_commandes`
   ADD KEY `produit_id` (`produit_id`);
 
 --
--- Indexes for table `historique_commandes`
+-- Index pour la table `historique_commandes`
 --
 ALTER TABLE `historique_commandes`
   ADD PRIMARY KEY (`historique_id`),
   ADD KEY `client_id` (`client_id`);
 
 --
--- Indexes for table `livraisons`
+-- Index pour la table `livraisons`
 --
 ALTER TABLE `livraisons`
   ADD PRIMARY KEY (`livraison_id`),
@@ -237,102 +289,114 @@ ALTER TABLE `livraisons`
   ADD KEY `livreur_id` (`livreur_id`);
 
 --
--- Indexes for table `livreurs`
+-- Index pour la table `livreurs`
 --
 ALTER TABLE `livreurs`
   ADD PRIMARY KEY (`livreur_id`);
 
 --
--- Indexes for table `produits`
+-- Index pour la table `produits`
 --
 ALTER TABLE `produits`
   ADD PRIMARY KEY (`produit_id`),
   ADD KEY `fk` (`id_cat`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- Index pour la table `reservations`
+--
+ALTER TABLE `reservations`
+  ADD PRIMARY KEY (`reservation_id`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
 --
 
 --
--- AUTO_INCREMENT for table `categories`
+-- AUTO_INCREMENT pour la table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id_cat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id_cat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
--- AUTO_INCREMENT for table `clients`
+-- AUTO_INCREMENT pour la table `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT for table `commandes`
+-- AUTO_INCREMENT pour la table `commandes`
 --
 ALTER TABLE `commandes`
-  MODIFY `commande_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1234567896;
+  MODIFY `commande_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1234567899;
 
 --
--- AUTO_INCREMENT for table `details_commandes`
+-- AUTO_INCREMENT pour la table `details_commandes`
 --
 ALTER TABLE `details_commandes`
-  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `historique_commandes`
+-- AUTO_INCREMENT pour la table `historique_commandes`
 --
 ALTER TABLE `historique_commandes`
   MODIFY `historique_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
--- AUTO_INCREMENT for table `livraisons`
+-- AUTO_INCREMENT pour la table `livraisons`
 --
 ALTER TABLE `livraisons`
-  MODIFY `livraison_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `livraison_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `livreurs`
+-- AUTO_INCREMENT pour la table `livreurs`
 --
 ALTER TABLE `livreurs`
   MODIFY `livreur_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `produits`
+-- AUTO_INCREMENT pour la table `produits`
 --
 ALTER TABLE `produits`
-  MODIFY `produit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `produit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
--- Constraints for dumped tables
+-- AUTO_INCREMENT pour la table `reservations`
+--
+ALTER TABLE `reservations`
+  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Contraintes pour les tables déchargées
 --
 
 --
--- Constraints for table `commandes`
+-- Contraintes pour la table `commandes`
 --
 ALTER TABLE `commandes`
   ADD CONSTRAINT `commandes_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`);
 
 --
--- Constraints for table `details_commandes`
+-- Contraintes pour la table `details_commandes`
 --
 ALTER TABLE `details_commandes`
   ADD CONSTRAINT `details_commandes_ibfk_1` FOREIGN KEY (`commande_id`) REFERENCES `commandes` (`commande_id`),
   ADD CONSTRAINT `details_commandes_ibfk_2` FOREIGN KEY (`produit_id`) REFERENCES `produits` (`produit_id`);
 
 --
--- Constraints for table `historique_commandes`
+-- Contraintes pour la table `historique_commandes`
 --
 ALTER TABLE `historique_commandes`
   ADD CONSTRAINT `historique_commandes_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`);
 
 --
--- Constraints for table `livraisons`
+-- Contraintes pour la table `livraisons`
 --
 ALTER TABLE `livraisons`
   ADD CONSTRAINT `livraisons_ibfk_1` FOREIGN KEY (`commande_id`) REFERENCES `commandes` (`commande_id`),
   ADD CONSTRAINT `livraisons_ibfk_2` FOREIGN KEY (`livreur_id`) REFERENCES `livreurs` (`livreur_id`);
 
 --
--- Constraints for table `produits`
+-- Contraintes pour la table `produits`
 --
 ALTER TABLE `produits`
   ADD CONSTRAINT `fk` FOREIGN KEY (`id_cat`) REFERENCES `categories` (`id_cat`) ON DELETE CASCADE ON UPDATE CASCADE;
