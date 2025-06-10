@@ -226,30 +226,36 @@
                 // Gestion de l'upload d'image
                 $image_path = null;
                 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                    $target_dir = "uploads/produits/";
+                    // Chemin absolu du dossier uploads
+                    $target_dir = $_SERVER['DOCUMENT_ROOT'] . '/bellavista/uploads/produits/';
+                    
+                    // Créer le dossier s'il n'existe pas
                     if (!file_exists($target_dir)) {
                         mkdir($target_dir, 0777, true);
                     }
                     
-                    $file_name = uniqid() . '_' . basename($_FILES['image']['name']);
-                    $target_file = $target_dir . $file_name;
+                    // Nettoyer le nom du fichier
+                    $filename = preg_replace('/\s+/', '_', basename($_FILES['image']['name']));
+                    $target_file = $target_dir . $filename;
                     
                     // Vérifier le type de fichier
                     $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
                     $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-                    if (!in_array($imageFileType, $allowed_types)) {
-                        throw new Exception("Seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés.");
-                    }
                     
-                    if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-                        $image_path = $target_file;
-                        // Supprimer l'ancienne image si elle existe
-                        $old_image = $conn->query("SELECT image FROM produits WHERE produit_id = $produit_id")->fetch_assoc()['image'];
-                        if ($old_image && file_exists($old_image)) {
-                            unlink($old_image);
+                    if (in_array($imageFileType, $allowed_types)) {
+                        if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                            $image_path = 'uploads/produits/' . $filename; // Chemin relatif pour la BDD
+                            
+                            // Supprimer l'ancienne image si elle existe
+                            $old_image = $conn->query("SELECT image FROM produits WHERE produit_id = $produit_id")->fetch_assoc()['image'];
+                            if ($old_image && file_exists($_SERVER['DOCUMENT_ROOT'] . '/bellavista/' . $old_image)) {
+                                unlink($_SERVER['DOCUMENT_ROOT'] . '/bellavista/' . $old_image);
+                            }
+                        } else {
+                            throw new Exception("Erreur lors du téléchargement de l'image.");
                         }
                     } else {
-                        throw new Exception("Erreur lors du téléchargement de l'image.");
+                        throw new Exception("Seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés.");
                     }
                 }
                 
@@ -312,6 +318,9 @@
         $produit_details = null;
         if ($produit_id) {
             $produit_details = $conn->query("SELECT * FROM produits WHERE produit_id = $produit_id")->fetch_assoc();
+            if ($produit_details && !empty($produit_details['image'])) {
+                $produit_details['image_display'] = $base_url . $produit_details['image'];
+            }
         }
         ?>
         
@@ -389,10 +398,10 @@
                     <div class="form-group">
                         <label for="image">Image du produit:</label>
                         <input type="file" id="image" name="image" accept="image/*">
-                        <?php if ($produit_details['image']): ?>
+                        <?php if (!empty($produit_details['image'])): ?>
                             <div>
                                 <p>Image actuelle:</p>
-                                <img src="<?= htmlspecialchars($produit_details['image']) ?>" class="preview-image">
+                                <img src="<?= $produit_details['image_display'] ?>" class="preview-image">
                             </div>
                         <?php endif; ?>
                     </div>
