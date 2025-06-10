@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Tables</title>
     <style>
-        /* Reprenez les styles de admin.php */
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -66,15 +65,45 @@
         .btn-secondary {
             background-color: #3498db;
         }
+        .btn-danger {
+            background-color: #e74c3c;
+        }
         .image-preview {
             max-width: 100px;
             max-height: 100px;
             margin-top: 5px;
         }
+        /* Styles pour les messages d'alerte */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+        .alert-error {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
     </style>
 </head>
 <body>
     <h1>Gestion des Tables</h1>
+    
+    <!-- Affichage des messages de succès/erreur -->
+    <?php
+    if (isset($_GET['success'])) {
+        echo '<div class="alert alert-success">'.htmlspecialchars($_GET['success']).'</div>';
+    }
+    if (isset($_GET['error'])) {
+        echo '<div class="alert alert-error">'.htmlspecialchars($_GET['error']).'</div>';
+    }
+    ?>
     
     <div class="action-buttons">
         <a href="admin.php" class="btn btn-secondary">Retour à l'administration</a>
