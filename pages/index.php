@@ -10,7 +10,7 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
         <p>Authentic flavors crafted with passion and the finest ingredients</p>
         <div class="hero-buttons">
             <a href="#categories" class="btn">Explore Our Menu</a>
-            <a href="reservation.php" class="btn btn-reservation">Make Reservation</a>
+            <a href="reservation1.php" class="btn btn-reservation">Make Reservation</a>
         </div>
     </div>
 </section>
