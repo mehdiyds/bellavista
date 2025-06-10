@@ -176,7 +176,6 @@ header {
 .btn-reservation {
     background-color: var(--secondary-color); /* Warm beige */
     color: var(--dark-color); /* Dark brown text */
-    border: 2px solid var(--secondary-color);
     position: relative;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(139, 69, 19, 0.2);
@@ -253,6 +252,7 @@ header {
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s;
+    cursor: pointer;
 }
 
 .btn:hover {

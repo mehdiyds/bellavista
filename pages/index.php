@@ -85,7 +85,7 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
                     <!-- Characteristics will be added dynamically -->
                 </ul>
             </div>
-            <span class="price" id="popupProductPrice">0.00 DNT</span>
+            <span class="price" id="popupProductPrice">0.00 DT</span>
         </div>
         <div class="popup-footer">
             <button class="cancel-btn" onclick="closePopup()">Cancel</button>
@@ -400,16 +400,6 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
 }
 
 @media (max-width: 480px) {
-    .hero-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .btn {
-        width: 100%;
-        max-width: 250px;
-        margin: 0 auto;
-    }
     
     .categories-grid, .products-grid {
         grid-template-columns: 1fr;
@@ -463,7 +453,7 @@ let currentCategoryName = '';
 function showProductDetails(product) {
     document.getElementById('popupProductName').textContent = product.nom;
     document.getElementById('popupProductDescription').textContent = product.description;
-    document.getElementById('popupProductPrice').textContent = parseFloat(product.prix).toFixed(2) + ' DNT';
+    document.getElementById('popupProductPrice').textContent = parseFloat(product.prix).toFixed(2) + ' DT';
     
     const imgElement = document.getElementById('popupProductImage');
     imgElement.src = baseUrl + product.image;
@@ -560,7 +550,7 @@ function updateCartHeader() {
     const priceDisplay = document.querySelector('.cart-prix');
     
     if (counter) counter.textContent = totalItems;
-    if (priceDisplay) priceDisplay.textContent = totalPrice.toFixed(2) + ' DNT';
+    if (priceDisplay) priceDisplay.textContent = totalPrice.toFixed(2) + ' DT';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -609,7 +599,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <h3>${product.nom}</h3>
                                 <p class="product-description">${product.description}</p>
                                 <div class="product-details">
-                                    <span class="price">${parseFloat(product.prix).toFixed(2)} DNT</span>
+                                    <span class="price">${parseFloat(product.prix).toFixed(2)} DT</span>
                                 </div>
                             </div>
                         </div>`;

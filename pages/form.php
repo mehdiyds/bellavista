@@ -115,9 +115,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'order_id' => $commande_id,
             'customer_name' => $nom,
             'address' => $adresse,
-            'total' => number_format($total, 2) . ' DH',
-            'montant_paye' => number_format($montant_paye, 2) . ' DH',
-            'monnaie_rendue' => ($paiement === 'plus') ? number_format($montant_paye - $total, 2) . ' DH' : '0.00 DH',
+            'total' => number_format($total, 2) . ' DNT',
+            'montant_paye' => number_format($montant_paye, 2) . ' DNT',
+            'monnaie_rendue' => ($paiement === 'plus') ? number_format($montant_paye - $total, 2) . ' DNT' : '0.00 DNT',
             'produits_commandes' => $liste_produits
         ];
         
@@ -268,9 +268,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         echo '<tr>';
                         echo '<td>' . htmlspecialchars($item['name']) . '</td>';
                         echo '<td><img src="' . $image . '" alt="' . htmlspecialchars($item['name']) . '" class="product-image" onerror="this.src=\'' . $baseUrl . 'uploads/default.jpg\'"></td>';
-                        echo '<td>' . number_format($item['price'], 2) . ' DH</td>';
+                        echo '<td>' . number_format($item['price'], 2) . ' DT</td>';
                         echo '<td>' . $item['quantity'] . '</td>';
-                        echo '<td>' . number_format($itemTotal, 2) . ' DH</td>';
+                        echo '<td>' . number_format($itemTotal, 2) . ' DT</td>';
                         echo '</tr>';
                     }
                     ?>
@@ -278,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <tfoot>
                     <tr>
                         <td colspan="4" style="text-align: right; font-weight: bold; padding: 15px;">Total TTC:</td>
-                        <td style="font-weight: bold; padding: 15px;"><?php echo number_format($total, 2); ?> DH</td>
+                        <td style="font-weight: bold; padding: 15px;"><?php echo number_format($total, 2); ?> D</td>
                     </tr>
                 </tfoot>
             </table>

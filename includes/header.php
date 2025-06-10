@@ -7,20 +7,19 @@
     <title>Bella Vista - Coffee & Restaurant</title>
     <link rel="stylesheet" href="style.css">
     <script src="control.js"></script>
-    <script>
-    // Replace the existing script with this minimal version
-    document.addEventListener('DOMContentLoaded', function() {
-        updateCartHeader();
-    });
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartHeader();
+});
 
-    function updateCartHeader() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
-        
-        document.querySelector('.cart-count').textContent = totalItems;
-        document.querySelector('.cart-prix').textContent = totalPrice.toFixed(2) + ' DNT';
-    }
+function updateCartHeader() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
+    
+    document.querySelector('.cart-count').textContent = totalItems;
+    document.querySelector('.cart-prix').textContent = totalPrice.toFixed(2) + ' DT';
+}
 </script>
 </head>
 <body>
@@ -45,7 +44,7 @@
                      <i class="fas fa-utensils"></i>
                      <div class="cart-count">0</div>
                     </div>
-                    <span class="cart-prix">0 DNT</span></a>
+                    <span class="cart-prix">0 DT</span></a>
 
                     </a>
                 </div>
