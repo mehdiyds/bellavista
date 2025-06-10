@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 10 juin 2025 à 19:31
+-- Généré le : mar. 10 juin 2025 à 20:44
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -34,6 +34,13 @@ CREATE TABLE `categories` (
   `image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `categories`
+--
+
+INSERT INTO `categories` (`id_cat`, `nom`, `description`, `image`) VALUES
+(41, 'fastfood', 'bniin', 'uploads/categories/68486cd236fb9_684814a170fbe_fastfood.png');
+
 -- --------------------------------------------------------
 
 --
@@ -56,7 +63,8 @@ INSERT INTO `clients` (`client_id`, `nom`, `telephone`, `adresse`) VALUES
 (6, 'cghjk', '7876', 'RUE OMKALTHOUM'),
 (7, 'yassine ', '23444555', 'korba'),
 (8, 'yassine ', '234567555', 'korba'),
-(9, 'nassim', '24555577', 'korba ');
+(9, 'nassim', '24555577', 'korba '),
+(10, 'nassim', '22333555', 'korba');
 
 -- --------------------------------------------------------
 
@@ -76,6 +84,13 @@ CREATE TABLE `commandes` (
   `commande` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `commandes`
+--
+
+INSERT INTO `commandes` (`commande_id`, `client_id`, `date_commande`, `montant_total`, `montant_paye`, `statut`, `notes`, `commande`) VALUES
+(1234567899, 10, '2025-06-10 19:36:54', 13.00, 13.00, 'livrée', NULL, '1 pizza');
+
 -- --------------------------------------------------------
 
 --
@@ -89,6 +104,13 @@ CREATE TABLE `details_commandes` (
   `quantite` int(11) NOT NULL DEFAULT 1,
   `prix_unitaire` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `details_commandes`
+--
+
+INSERT INTO `details_commandes` (`detail_id`, `commande_id`, `produit_id`, `quantite`, `prix_unitaire`) VALUES
+(4, 1234567899, 38, 1, 13.00);
 
 -- --------------------------------------------------------
 
@@ -135,6 +157,13 @@ CREATE TABLE `livraisons` (
   `statut` enum('assignée','en cours','livrée','annulée') DEFAULT 'assignée'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `livraisons`
+--
+
+INSERT INTO `livraisons` (`livraison_id`, `commande_id`, `livreur_id`, `date_assignation`, `statut`) VALUES
+(16, 1234567899, 1, '2025-06-10 19:37:59', 'livrée');
+
 -- --------------------------------------------------------
 
 --
@@ -155,7 +184,7 @@ CREATE TABLE `livreurs` (
 --
 
 INSERT INTO `livreurs` (`livreur_id`, `nom`, `prenom`, `telephone`, `statut`, `mdp`) VALUES
-(1, 'km,n', 'nassim', '26719771', 'indisponible', '123456'),
+(1, 'km,n', 'nassim', '26719771', 'disponible', '123456'),
 (2, 'TAHER', 'TAHAN', '23456789', 'indisponible', 'AZE'),
 (3, 'MTARRR', 'ZDCQS', '3456789', 'en livraison', 'AZERTYU'),
 (4, 'YEDES', 'TAHER', '96544234', 'en livraison', '123456789'),
@@ -177,6 +206,55 @@ CREATE TABLE `produits` (
   `caracteristiques` varchar(200) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `produits`
+--
+
+INSERT INTO `produits` (`produit_id`, `nom`, `description`, `prix`, `id_cat`, `caracteristiques`, `image`) VALUES
+(38, 'pizza', 'bniina', 12.00, 41, 'size: medium', 'uploads/produits/684875c1d1313_makloub.png');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `reservations`
+--
+
+CREATE TABLE `reservations` (
+  `reservation_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `date_reservation` datetime NOT NULL,
+  `heure_reservation` time NOT NULL,
+  `nombre_personnes` int(11) NOT NULL,
+  `numero_table` int(11) DEFAULT NULL,
+  `statut` enum('confirmée','en attente','annulée','terminée') DEFAULT 'en attente',
+  `notes` text DEFAULT NULL,
+  `images` varchar(255) DEFAULT NULL COMMENT 'Chemin vers les images associées'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `tables`
+--
+
+CREATE TABLE `tables` (
+  `table_id` int(11) NOT NULL,
+  `numero` int(11) NOT NULL,
+  `capacite` int(11) NOT NULL,
+  `description` text DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `statut` enum('disponible','occupée','réservée','maintenance') DEFAULT 'disponible',
+  `caracteristiques` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `tables`
+--
+
+INSERT INTO `tables` (`table_id`, `numero`, `capacite`, `description`, `image`, `statut`, `caracteristiques`) VALUES
+(1, 1, 5, 'ZABOURA', 'uploads/tables/68487acca737e_137-71810.png', 'disponible', 'MOURY7A'),
+(2, 2, 4, 'TT', 'uploads/tables/68487bb059538_makloub.png', 'disponible', 'RR');
 
 --
 -- Index pour les tables déchargées
@@ -240,6 +318,20 @@ ALTER TABLE `produits`
   ADD KEY `fk` (`id_cat`);
 
 --
+-- Index pour la table `reservations`
+--
+ALTER TABLE `reservations`
+  ADD PRIMARY KEY (`reservation_id`),
+  ADD KEY `client_id` (`client_id`);
+
+--
+-- Index pour la table `tables`
+--
+ALTER TABLE `tables`
+  ADD PRIMARY KEY (`table_id`),
+  ADD UNIQUE KEY `numero` (`numero`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -247,25 +339,25 @@ ALTER TABLE `produits`
 -- AUTO_INCREMENT pour la table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id_cat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id_cat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT pour la table `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT pour la table `commandes`
 --
 ALTER TABLE `commandes`
-  MODIFY `commande_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1234567899;
+  MODIFY `commande_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1234567900;
 
 --
 -- AUTO_INCREMENT pour la table `details_commandes`
 --
 ALTER TABLE `details_commandes`
-  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `historique_commandes`
@@ -277,7 +369,7 @@ ALTER TABLE `historique_commandes`
 -- AUTO_INCREMENT pour la table `livraisons`
 --
 ALTER TABLE `livraisons`
-  MODIFY `livraison_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `livraison_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT pour la table `livreurs`
@@ -289,7 +381,19 @@ ALTER TABLE `livreurs`
 -- AUTO_INCREMENT pour la table `produits`
 --
 ALTER TABLE `produits`
-  MODIFY `produit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `produit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
+-- AUTO_INCREMENT pour la table `reservations`
+--
+ALTER TABLE `reservations`
+  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `tables`
+--
+ALTER TABLE `tables`
+  MODIFY `table_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Contraintes pour les tables déchargées
@@ -326,6 +430,12 @@ ALTER TABLE `livraisons`
 --
 ALTER TABLE `produits`
   ADD CONSTRAINT `fk` FOREIGN KEY (`id_cat`) REFERENCES `categories` (`id_cat`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `reservations`
+--
+ALTER TABLE `reservations`
+  ADD CONSTRAINT `reservations_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -285,6 +285,9 @@
 </select>
                     <button type="button" id="assign-btn" class="assign-btn">Assigner</button>
                 </div>
+                    <div class="button-group">
+                    <a href="gestion_tables.php"><button type="button" class="reservation-btn">Gérer les Réservations</button></a>
+                </div>
                 
                 <div class="button-group">
                     <button type="submit" name="validate_delivery" class="validate-btn">Valider la livraison</button>
