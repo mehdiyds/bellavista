@@ -273,18 +273,27 @@
                 <div class="button-group">
                     <label>Livreur:</label>
                     <select id="livreur-select">
-                        <option value="">-- Sélectionner --</option>
-                        <?php 
-                        $livreurs = $conn->query("SELECT livreur_id, nom FROM livreurs WHERE statut = 'disponible' ORDER BY nom");
-                        while($livreur = $livreurs->fetch_assoc()): ?>
-                            <option value="<?= $livreur['livreur_id'] ?>"><?= htmlspecialchars($livreur['nom']) ?></option>
-                        <?php endwhile; ?>
-                    </select>
+    <option value="">-- Sélectionner --</option>
+    <?php 
+    $livreurs = $conn->query("SELECT livreur_id, nom, statut FROM livreurs WHERE statut != 'indisponible' ORDER BY nom");
+    while($livreur = $livreurs->fetch_assoc()): ?>
+        <option value="<?= $livreur['livreur_id'] ?>">
+            <?= htmlspecialchars($livreur['nom']) ?> 
+            (<?= $livreur['statut'] ?>)
+        </option>
+    <?php endwhile; ?>
+</select>
                     <button type="button" id="assign-btn" class="assign-btn">Assigner</button>
+                </div>
+                    <div class="button-group">
+                    <a href="gestion_tables.php"><button type="button" class="reservation-btn">Gérer les Réservations</button></a>
                 </div>
                 
                 <div class="button-group">
                     <button type="submit" name="validate_delivery" class="validate-btn">Valider la livraison</button>
+                </div>
+                    <div class="button-group">
+                    <a href="liste_livreurs.php"><button type="button" class="stat-btn">Liste des Livreurs</button></a>
                 </div>
                 
                 <div class="button-group">
@@ -307,6 +316,9 @@
                <div class="button-group">
                 <a href="supprimer_produit.php"><button type="button" class="sup-btn">Supprimer un produit</button></a>
                </div>
+               <div class="button-group">
+                    <a href="modifier_produit.php"><button type="button" class="product-btn">Modifier un produit</button></a>
+                </div>
             </div>
         </form>
         
