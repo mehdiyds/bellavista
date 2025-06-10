@@ -313,6 +313,9 @@
                <div class="button-group">
                 <a href="supprimer_produit.php"><button type="button" class="sup-btn">Supprimer un produit</button></a>
                </div>
+               <div class="button-group">
+                    <a href="modifier_produit.php"><button type="button" class="product-btn">Modifier un produit</button></a>
+                </div>
             </div>
         </form>
         

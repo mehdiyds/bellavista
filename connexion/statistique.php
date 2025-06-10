@@ -312,17 +312,6 @@ $statuses = $pdo->query("SELECT DISTINCT statut FROM historique_commandes")->fet
                 <div class="stat-value"><?= number_format($stats['total_amount'] ?? 0, 2) ?> DT</div>
             </div>
             
-            <div class="stat-card">
-                <h3>Montant payé</h3>
-                <div class="stat-value"><?= number_format($stats['total_paid'] ?? 0, 2) ?> DT</div>
-            </div>
-            
-            <div class="stat-card">
-                <h3>Reste à payer</h3>
-                <div class="stat-value <?= ($stats['total_remaining'] ?? 0) < 0 ? 'negative-amount' : 'positive-amount' ?>">
-                    <?= number_format(abs($stats['total_remaining'] ?? 0), 2) ?> DT
-                </div>
-            </div>
         </div>
         
         <h2>Résultats</h2>
