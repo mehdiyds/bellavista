@@ -125,11 +125,13 @@
                 $conn->autocommit(FALSE); // Désactive l'autocommit pour la transaction
                 
                 $commande_ids = $_POST['commande_ids'];
-                $success = true;
                 
                 foreach ($commande_ids as $commande_id) {
-                    // 1. Récupérer les données de la commande
-                    $stmt = $conn->prepare("SELECT * FROM commandes WHERE commande_id = ?");
+                    // 1. Récupérer les détails de la commande
+                    $stmt = $conn->prepare("SELECT c.*, cl.nom AS client_nom 
+                                          FROM commandes c 
+                                          JOIN clients cl ON c.client_id = cl.client_id
+                                          WHERE c.commande_id = ?");
                     $stmt->bind_param("i", $commande_id);
                     if (!$stmt->execute()) {
                         throw new Exception("Erreur récupération commande: " . $stmt->error);
@@ -141,30 +143,61 @@
                         throw new Exception("Commande $commande_id introuvable");
                     }
                     
-                    // 2. Insérer dans l'historique
+                    // 2. Récupérer les détails des produits de la commande
+                    $stmt = $conn->prepare("SELECT dc.*, p.nom AS produit_nom 
+                                          FROM details_commandes dc
+                                          JOIN produits p ON dc.produit_id = p.produit_id
+                                          WHERE dc.commande_id = ?");
+                    $stmt->bind_param("i", $commande_id);
+                    if (!$stmt->execute()) {
+                        throw new Exception("Erreur récupération détails commande: " . $stmt->error);
+                    }
+                    $details = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                    $stmt->close();
+                    
+                    // 3. Créer une description détaillée de la commande
+                    $commande_description = [];
+                    foreach ($details as $detail) {
+                        $commande_description[] = $detail['quantite'] . " " . $detail['produit_nom'] . " (" . $detail['prix_unitaire'] . " DT)";
+                    }
+                    $commande_text = implode(" + ", $commande_description);
+                    
+                    // 4. Insérer dans l'historique
                     $stmt = $conn->prepare("INSERT INTO historique_commandes 
                                           (commande_id, client_id, date_commande, montant_total, 
                                            montant_paye, statut, notes, commande)
-                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                    $stmt->bind_param("iisddsss", 
+                                          VALUES (?, ?, ?, ?, ?, 'livrée', ?, ?)");
+                    $stmt->bind_param("iisddss", 
                         $commande['commande_id'],
                         $commande['client_id'],
                         $commande['date_commande'],
                         $commande['montant_total'],
                         $commande['montant_paye'],
-                        $commande['statut'],
                         $commande['notes'],
-                        $commande['commande']
+                        $commande_text
                     );
                     if (!$stmt->execute()) {
                         throw new Exception("Erreur insertion historique: " . $stmt->error);
                     }
                     $stmt->close();
                     
-                    // 3. Supprimer les livraisons associées (sans vérifier les contraintes)
-                    $conn->query("DELETE FROM livraisons WHERE commande_id = $commande_id");
+                    // 5. Supprimer les détails de la commande
+                    $stmt = $conn->prepare("DELETE FROM details_commandes WHERE commande_id = ?");
+                    $stmt->bind_param("i", $commande_id);
+                    if (!$stmt->execute()) {
+                        throw new Exception("Erreur suppression détails commande: " . $stmt->error);
+                    }
+                    $stmt->close();
                     
-                    // 4. Supprimer la commande
+                    // 6. Supprimer les livraisons associées
+                    $stmt = $conn->prepare("DELETE FROM livraisons WHERE commande_id = ?");
+                    $stmt->bind_param("i", $commande_id);
+                    if (!$stmt->execute()) {
+                        throw new Exception("Erreur suppression livraison: " . $stmt->error);
+                    }
+                    $stmt->close();
+                    
+                    // 7. Supprimer la commande
                     $stmt = $conn->prepare("DELETE FROM commandes WHERE commande_id = ?");
                     $stmt->bind_param("i", $commande_id);
                     if (!$stmt->execute()) {
