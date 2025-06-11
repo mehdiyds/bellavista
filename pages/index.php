@@ -6,19 +6,19 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
 ?>
 <section class="hero">
     <div class="hero-content">
-        <h1>Experience the Finest Coffee & Cuisine</h1>
-        <p>Authentic flavors crafted with passion and the finest ingredients</p>
+        <h1>Découvrez le Meilleur Café & Cuisine</h1>
+        <p>Saveurs authentiques préparées avec passion et les meilleurs ingrédients</p>
         <div class="hero-buttons">
-            <a href="#categories" class="btn">Explore Our Menu</a>
-            <a href="reservation1.php" class="btn btn-reservation">Make Reservation</a>
+            <a href="#categories" class="btn">Explorer Notre Menu</a>
+            <a href="reservation1.php" class="btn btn-reservation">Réserver</a>
         </div>
     </div>
 </section>
 
 <section id="categories" class="categories">
     <div class="container">
-        <h2 class="section-title">Our Menu Categories</h2>
-        <p class="section-subtitle">Discover our wide selection of premium beverages and delicious food options</p>
+        <h2 class="section-title">Nos Catégories de Menu</h2>
+        <p class="section-subtitle">Découvrez notre large sélection de boissons premium et options culinaires délicieuses</p>
         
         <div class="categories-grid">
             <?php
@@ -51,7 +51,7 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
                     </div>';
                 }
             } catch (PDOException $e) {
-                echo '<p class="error">Error loading categories: '.$e->getMessage().'</p>';
+                echo '<p class="error">Erreur de chargement des catégories: '.$e->getMessage().'</p>';
             }
             ?>
         </div>
@@ -60,11 +60,12 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
 
 <section id="products" class="products">
     <div class="container">
-        <h2 class="section-title">Our Products</h2>
-        <p class="section-subtitle" id="category-name">Select a category to view products</p>
+        <h2 class="section-title">Nos Produits</h2>
+        <p class="section-subtitle" id="category-name">Sélectionnez une catégorie pour voir les produits</p>
         
         <div class="products-grid" id="products-container">
             <!-- Products will be loaded here dynamically -->
+            <div class="loading">Chargement des produits...</div>
         </div>
     </div>
 </section>
@@ -73,14 +74,14 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
 <div id="productPopup" class="popup-container">
     <div class="popup-content">
         <div class="popup-header">
-            <h2 id="popupProductName">Product Name</h2>
+            <h2 id="popupProductName">Nom du Produit</h2>
             <span class="close-popup" onclick="closePopup()">&times;</span>
         </div>
         <div class="popup-body">
-            <img id="popupProductImage" src="" alt="Product Image">
-            <p id="popupProductDescription">Product description</p>
+            <img id="popupProductImage" src="" alt="Image du produit">
+            <p id="popupProductDescription">Description du produit</p>
             <div class="product-characteristics">
-                <h3>Characteristics:</h3>
+                <h3>Caractéristiques :</h3>
                 <ul id="characteristicsList">
                     <!-- Characteristics will be added dynamically -->
                 </ul>
@@ -88,12 +89,12 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
             <span class="price" id="popupProductPrice">0.00 DT</span>
         </div>
         <div class="popup-footer">
-            <button class="cancel-btn" onclick="closePopup()">Cancel</button>
-            <button class="add-to-cart" onclick="addToCart()">Add to Cart</button>
+            <button class="cancel-btn" onclick="closePopup()">Annuler</button>
+            <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
         </div>
     </div>
 </div>
-
+<?php include 'C:\xampp\htdocs\bellavista\includes\footer.php'; ?>
 <style>
     .categories-grid {
     display: grid;

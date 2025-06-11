@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bella Vista - Coffee & Restaurant</title>
+    <title>Bella Vista - Café & Restaurant</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="control.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -33,10 +34,8 @@ function updateCartHeader() {
                     </a>
                 </div>
 
-
-
-  <div class="nav-links">
-                    <a href="about.php">About Us</a>
+                <div class="nav-links">
+                    <a href="about.php">À propos</a>
                     <a href="contact.php">Contact</a>
                         
                    <div class="cart-icon">
@@ -49,9 +48,5 @@ function updateCartHeader() {
                     </a>
                 </div>
             </div>
-        
-        
-        
-        
         </div>
     </header>

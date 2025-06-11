@@ -300,7 +300,6 @@
                     <div class="button-group">
                     <a href="liste_livreurs.php"><button type="button" class="stat-btn">Liste des Livreurs</button></a>
                 </div>
-                
                 <div class="button-group">
                     <a href="ajout_livreur.php"><button type="button" class="add-btn">Ajouter un livreur</button></a>
                 </div>

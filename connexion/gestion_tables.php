@@ -172,7 +172,7 @@
             
             echo '</td>
                     <td>
-                        <a href="modifier_table.php?id='.$row['table_id'].'" class="btn btn-secondary">Modifier</a>
+                        
                         <a href="supprimer_table.php?id='.$row['table_id'].'" class="btn btn-danger" onclick="return confirm(\'Êtes-vous sûr de vouloir supprimer cette table ?\')">Supprimer</a>
                     </td>
                   </tr>';
