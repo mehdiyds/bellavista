@@ -246,13 +246,25 @@ $is_new_client = isset($_SESSION['is_new_client']) ? $_SESSION['is_new_client'] 
                 </div>
             </div>
             
-            <div class="action-buttons">
-                <a href="index.php" class="action-btn home-btn">
-                    <i class="fas fa-home"></i> Retour à l'accueil
-                </a>
-            </div>
-            
-            <div class="delivery-message">
+<div class="action-buttons">
+    <a href="javascript:void(0);" onclick="clearCartAndRedirect()" class="action-btn home-btn">
+        <i class="fas fa-home"></i> Retour à l'accueil
+    </a>
+</div>
+
+<script>
+function clearCartAndRedirect() {
+    // Vider le panier du localStorage
+    localStorage.removeItem('cart');
+    
+    // Mettre à jour le header immédiatement
+    document.querySelector('.cart-count').textContent = '0';
+    document.querySelector('.cart-prix').textContent = '0.00 DNT';
+    
+    // Rediriger vers l'accueil
+    window.location.href = 'index.php';
+}
+</script>            <div class="delivery-message">
                 <i class="fas fa-info-circle"></i> Votre livreur arrivera dans environ 30 minutes!
             </div>
         </div>

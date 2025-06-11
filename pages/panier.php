@@ -215,31 +215,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
         gap: 20px;
     }
 
-    .cart-actions .btn {
-        flex: 1;
-        text-align: center;
-        max-width: 300px;
-    }
-
-    .continue-btn {
-        background-color: var(--secondary-color);
-        color: var(--dark-color);
-    }
-
-    .continue-btn:hover {
-        background-color: var(--primary-color);
-        color: var(--white);
-    }
-
-    .checkout-btn {
-        background-color: var(--accent-color);
-        color: var(--white);
-        margin-left: auto;
-    }
-
-    .checkout-btn:hover {
-        background-color: var(--primary-color);
-    }
 
     /* Responsive Design */
     @media (max-width: 768px) {
@@ -319,7 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
             </table>
             
             <div class="cart-total">
-                <h3>Total TTC: <span id="cartTotal">0 DH</span></h3>
+                <h3>Total TTC: <span id="cartTotal">0 DT</span></h3>
             </div>
             
             <div class="cart-actions">
@@ -370,7 +345,7 @@ function loadCartItems() {
                 </td>
             </tr>
         `;
-        cartTotalElement.textContent = '0.00 DH';
+        cartTotalElement.textContent = '0.00 DT';
         return;
     }
     
@@ -395,7 +370,7 @@ function loadCartItems() {
                      alt="${safeItem.name}" class="product-image"
                      onerror="this.src='${baseUrl}uploads/default.jpg'">
             </td>
-            <td data-label="Prix">${safeItem.price.toFixed(2)} DH</td>
+            <td data-label="Prix">${safeItem.price.toFixed(2)} DT</td>
             <td data-label="Quantité">
                 <div class="quantity-controls">
                     <button class="quantity-btn minus" data-index="${index}">-</button>
@@ -404,7 +379,7 @@ function loadCartItems() {
                     <button class="quantity-btn plus" data-index="${index}">+</button>
                 </div>
             </td>
-            <td data-label="Total">${itemTotal.toFixed(2)} DH</td>
+            <td data-label="Total">${itemTotal.toFixed(2)} DT</td>
             <td data-label="Action">
                 <button class="remove-btn" onclick="removeFromCart(${index})">✕</button>
             </td>
@@ -434,7 +409,7 @@ function loadCartItems() {
         });
     });
     
-    cartTotalElement.textContent = total.toFixed(2) + ' DH';
+    cartTotalElement.textContent = total.toFixed(2) + ' DT';
     updateCartHeader();
 }
 
@@ -479,7 +454,7 @@ function updateCartHeader() {
     const priceDisplay = document.querySelector('.cart-prix');
     
     if (counter) counter.textContent = totalItems;
-    if (priceDisplay) priceDisplay.textContent = totalPrice.toFixed(2) + ' DH';
+    if (priceDisplay) priceDisplay.textContent = totalPrice.toFixed(2) + ' DT';
 }
 </script>
 
