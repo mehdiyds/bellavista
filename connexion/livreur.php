@@ -16,19 +16,29 @@ try {
     
     // Récupérer les livraisons assignées à ce livreur
     $stmt = $db->prepare("
-    SELECT l.livraison_id, l.commande_id, l.statut, l.date_assignation,
-           c.client_id, cl.nom AS client_nom, 
-           cl.telephone, cl.adresse, c.montant_total, c.commande,
-           DATE_FORMAT(c.date_commande, '%Y-%m-%d %H:%i') AS date_commande
-    FROM livraisons l
-    JOIN commandes c ON l.commande_id = c.commande_id
-    JOIN clients cl ON c.client_id = cl.client_id
-    WHERE l.livreur_id = :livreur_id
-    AND l.statut != 'livrée'
-    ORDER BY l.date_assignation DESC
-");
+        SELECT l.livraison_id, l.commande_id, l.statut, l.date_assignation,
+               c.client_id, cl.nom AS client_nom, 
+               cl.telephone, cl.adresse, c.montant_total, c.commande,
+               DATE_FORMAT(c.date_commande, '%Y-%m-%d %H:%i') AS date_commande
+        FROM livraisons l
+        JOIN commandes c ON l.commande_id = c.commande_id
+        JOIN clients cl ON c.client_id = cl.client_id
+        WHERE l.livreur_id = :livreur_id
+        AND l.statut != 'livrée'
+        ORDER BY l.date_assignation DESC
+    ");
     $stmt->execute([':livreur_id' => $livreur['id']]);
     $livraisons = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Si aucune livraison n'est assignée, mettre à jour le statut du livreur à "disponible"
+    if (empty($livraisons)) {
+        $updateStmt = $db->prepare("UPDATE livreurs SET statut = 'disponible' WHERE livreur_id = :livreur_id");
+        $updateStmt->execute([':livreur_id' => $livreur['id']]);
+        
+        // Mettre à jour le statut dans la session
+        $_SESSION['livreur']['statut'] = 'disponible';
+        $livreur['statut'] = 'disponible';
+    }
     
 } catch (PDOException $e) {
     die("Erreur de base de données: " . $e->getMessage());
