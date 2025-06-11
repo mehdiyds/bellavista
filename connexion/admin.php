@@ -131,7 +131,7 @@
                 
                 foreach ($commande_ids as $commande_id) {
                     // 1. Récupérer les détails de la commande
-                    $stmt = $conn->prepare("SELECT c.*, cl.nom AS client_nom 
+                    $stmt = $conn->prepare("SELECT c.*, cl.nom AS client_nom, cl.telephone, cl.adresse 
                                           FROM commandes c 
                                           JOIN clients cl ON c.client_id = cl.client_id
                                           WHERE c.commande_id = ?");
@@ -226,9 +226,12 @@
             $conn = new mysqli('localhost', 'root', '', 'bellavista');
             $conn->set_charset("utf8mb4");
             
-            $sql = "SELECT c.*, cl.nom AS client, cl.telephone, cl.adresse 
-                    FROM commandes c JOIN clients cl ON c.client_id = cl.client_id
-                    ORDER BY c.date_commande DESC";
+            $sql = "SELECT c.*, 
+                   (SELECT nom FROM clients WHERE client_id = c.client_id) AS client,
+                   (SELECT telephone FROM clients WHERE client_id = c.client_id) AS telephone,
+                   (SELECT adresse FROM clients WHERE client_id = c.client_id) AS adresse
+                   FROM commandes c
+                   ORDER BY c.date_commande DESC";
             $result = $conn->query($sql);
         ?>
         
