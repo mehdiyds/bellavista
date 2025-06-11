@@ -7,6 +7,8 @@ if ($conn->connect_error) {
 
 // Récupérer les tables disponibles
 $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponible'");
+$base_url = "http://".$_SERVER['HTTP_HOST']."/connexion/";
+
 ?>
 
 <!DOCTYPE html>
@@ -236,7 +238,8 @@ $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponi
                     <?php while($table = $tables_disponibles->fetch_assoc()): ?>
                         <div class="table-card">
                             <div class="table-image-container">
-                                <?php if ($table['image']): ?>
+                                <?php if ($table['image']): echo($table['image'])?>
+                                    
                                     <img src="<?= $table['image'] ?>" alt="Table <?= $table['numero'] ?>" class="table-image">
                                 <?php else: ?>
                                     <img src="https://via.placeholder.com/400x200?text=Table+<?= $table['numero'] ?>" alt="Table <?= $table['numero'] ?>" class="table-image">
