@@ -1,7 +1,6 @@
 <?php
 // Configuration de la base URL
-$baseurl = 'http://' . $_SERVER['HTTP_HOST'] . '/';
-
+$baseurl = 'http://' . $_SERVER['HTTP_HOST'] . '/bellavista/connexion/';
 // Connexion à la base de données
 $conn = new mysqli('localhost', 'root', '', 'bellavista');
 if ($conn->connect_error) {
@@ -79,7 +78,6 @@ $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponi
 if ($tables_disponibles === false) {
     die("Erreur lors de la récupération des tables: " . $conn->error);
 }
->>>>>>> 5cb38ebe78ce07fddfbac2a3098e1d7ea31543f5
 ?>
 
 <!DOCTYPE html>
@@ -323,18 +321,17 @@ if ($tables_disponibles === false) {
                     <?php while($table = $tables_disponibles->fetch_assoc()): ?>
                         <div class="table-card">
                             <div class="table-image-container">
-                                <?php if (!empty($table['image'])): ?>
-                                    <img src="<?= $baseurl . htmlspecialchars($table['image']) ?>" 
-                                         alt="Table <?= htmlspecialchars($table['numero']) ?>" 
-                                         class="table-image"
-                                         onerror="this.src='<?= $baseurl ?>uploads/default.jpg'">
->>>>>>> 5cb38ebe78ce07fddfbac2a3098e1d7ea31543f5
-                                <?php else: ?>
-                                    <img src="https://via.placeholder.com/400x200?text=Table+<?= htmlspecialchars($table['numero']) ?>" 
-                                         alt="Table <?= htmlspecialchars($table['numero']) ?>" 
-                                         class="table-image">
-                                <?php endif; ?>
-                            </div>
+    <?php if (!empty($table['image'])): ?>
+        <img src="<?= $baseurl .  htmlspecialchars($table['image']) ?>" 
+             alt="Table <?= htmlspecialchars($table['numero']) ?>" 
+             class="table-image"
+             onerror="this.src='<?= $baseurl ?>uploads/default.jpg'">
+    <?php else: ?>
+        <img src="<?= $baseurl ?>uploads/default.jpg" 
+             alt="Table <?= htmlspecialchars($table['numero']) ?>" 
+             class="table-image">
+    <?php endif; ?>
+</div>
                             <div class="table-info">
                                 <h3>Table <?= htmlspecialchars($table['numero']) ?></h3>
                                 <span class="table-capacity"><i class="fas fa-users"></i> <?= htmlspecialchars($table['capacite']) ?> personnes max</span>
@@ -496,8 +493,3 @@ if ($tables_disponibles === false) {
     </script>
 </body>
 </html>
-
-<?php 
-$conn->close(); 
-?>
->>>>>>> 5cb38ebe78ce07fddfbac2a3098e1d7ea31543f5

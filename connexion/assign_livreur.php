@@ -1,48 +1,69 @@
 <?php
 header('Content-Type: application/json');
-session_start();
-
-// Vérifiez ici les permissions admin si nécessaire
-
-$data = json_decode(file_get_contents('php://input'), true);
 
 try {
-    $db = new PDO('mysql:host=127.0.0.1;dbname=bellavista;charset=utf8', 'root', '');
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $db->beginTransaction();
-
-    foreach ($data['commande_ids'] as $commande_id) {
-        // Vérifier si la commande existe et n'est pas déjà assignée
-        $stmt = $db->prepare("SELECT statut FROM commandes WHERE commande_id = ?");
-        $stmt->execute([$commande_id]);
-        $commande = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$commande || $commande['statut'] === 'livrée') {
-            $db->rollBack();
-            echo json_encode(['success' => false, 'message' => 'Commande invalide ou déjà livrée']);
-            exit;
-        }
-
-        // Créer la livraison
-        $stmt = $db->prepare("
-            INSERT INTO livraisons (commande_id, livreur_id, statut)
-            VALUES (?, ?, 'assignée')
-        ");
-        $stmt->execute([$commande_id, $data['livreur_id']]);
-
-        // Mettre à jour le statut de la commande
-        $stmt = $db->prepare("UPDATE commandes SET statut = 'en livraison' WHERE commande_id = ?");
-        $stmt->execute([$commande_id]);
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+    if (!isset($data['livreur_id']) || !isset($data['commande_ids'])) {
+        throw new Exception('Missing required parameters');
     }
-
-    // Mettre à jour le statut du livreur
-    $stmt = $db->prepare("UPDATE livreurs SET statut = 'en livraison' WHERE livreur_id = ?");
-    $stmt->execute([$data['livreur_id']]);
-
-    $db->commit();
-    echo json_encode(['success' => true]);
-} catch (PDOException $e) {
-    $db->rollBack();
-    echo json_encode(['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()]);
+    
+    $conn = new mysqli('localhost', 'root', '', 'bellavista');
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
+    }
+    
+    $conn->begin_transaction();
+    
+    $livreur_id = $conn->real_escape_string($data['livreur_id']);
+    $commande_ids = array_map([$conn, 'real_escape_string'], $data['commande_ids']);
+    
+    // 1. Update livreur status to "en livraison"
+    $stmt = $conn->prepare("UPDATE livreurs SET statut = 'en livraison' WHERE livreur_id = ?");
+    $stmt->bind_param("i", $livreur_id);
+    if (!$stmt->execute()) {
+        throw new Exception("Error updating livreur status: " . $stmt->error);
+    }
+    $stmt->close();
+    
+    // 2. Assign commands to livreur
+    foreach ($commande_ids as $commande_id) {
+        // Check if livraison already exists
+        $check = $conn->query("SELECT * FROM livraisons WHERE commande_id = '$commande_id'");
+        if ($check->num_rows > 0) {
+            // Update existing livraison
+            $stmt = $conn->prepare("UPDATE livraisons SET livreur_id = ?, statut = 'assignée' WHERE commande_id = ?");
+            $stmt->bind_param("ii", $livreur_id, $commande_id);
+        } else {
+            // Create new livraison
+            $stmt = $conn->prepare("INSERT INTO livraisons (commande_id, livreur_id, statut) VALUES (?, ?, 'assignée')");
+            $stmt->bind_param("ii", $commande_id, $livreur_id);
+        }
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Error assigning command: " . $stmt->error);
+        }
+        $stmt->close();
+        
+        // Update command status to "assignée"
+        $stmt = $conn->prepare("UPDATE commandes SET statut = 'assignée' WHERE commande_id = ?");
+        $stmt->bind_param("i", $commande_id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error updating command status: " . $stmt->error);
+        }
+        $stmt->close();
+    }
+    
+    $conn->commit();
+    echo json_encode(['success' => true, 'message' => 'Commands assigned successfully']);
+    
+} catch (Exception $e) {
+    if (isset($conn)) {
+        $conn->rollback();
+    }
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+} finally {
+    if (isset($conn)) {
+        $conn->close();
+    }
 }
