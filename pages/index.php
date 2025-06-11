@@ -94,7 +94,6 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
         </div>
     </div>
 </div>
-<?php include 'C:\xampp\htdocs\bellavista\includes\footer.php'; ?>
 <style>
     .categories-grid {
     display: grid;
@@ -619,5 +618,4 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCartHeader();
 });
 </script>
-
 <?php include 'C:\xampp\htdocs\bellavista\includes\footer.php'; ?>

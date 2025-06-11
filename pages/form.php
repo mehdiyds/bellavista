@@ -35,10 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $montant_paye = $_POST['montant'];
     }
 
-    // Vérifier si le client existe déjà
-    $sql_check = "SELECT client_id FROM clients WHERE telephone = ?";
+    // Vérifier si le client existe déjà (vérification par nom ET téléphone)
+    $sql_check = "SELECT client_id FROM clients WHERE nom = ? AND telephone = ?";
     $stmt_check = $conn->prepare($sql_check);
-    $stmt_check->bind_param("s", $telephone);
+    $stmt_check->bind_param("ss", $nom, $telephone);
     $stmt_check->execute();
     $result = $stmt_check->get_result();
     
@@ -46,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $client = $result->fetch_assoc();
         $client_id = $client['client_id'];
         
-        // Mettre à jour les infos du client si nécessaire
-        $sql_update = "UPDATE clients SET nom = ?, adresse = ? WHERE client_id = ?";
+        // Mettre à jour l'adresse du client si nécessaire
+        $sql_update = "UPDATE clients SET adresse = ? WHERE client_id = ?";
         $stmt_update = $conn->prepare($sql_update);
-        $stmt_update->bind_param("ssi", $nom, $adresse, $client_id);
+        $stmt_update->bind_param("si", $adresse, $client_id);
         $stmt_update->execute();
     } else {
         $sql = "INSERT INTO clients (nom, adresse, telephone) VALUES (?, ?, ?)";
@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // [Le reste du code reste inchangé...]
     // Préparation de la liste des produits commandés
     $liste_produits_commandes = [];
     $produits_counts = [];

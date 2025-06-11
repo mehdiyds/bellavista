@@ -106,7 +106,6 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
     </div>
 </section>
 
-<?php include 'C:\xampp\htdocs\bellavista\includes\footer.php'; ?>
 <style>
 /* About Hero */
 .about-hero {
