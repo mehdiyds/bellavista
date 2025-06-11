@@ -1,12 +1,84 @@
 <?php
-// Connexion à la base de données pour récupérer les tables disponibles
+// Configuration de la base URL
+$baseurl = 'http://' . $_SERVER['HTTP_HOST'] . '/';
+
+// Connexion à la base de données
 $conn = new mysqli('localhost', 'root', '', 'bellavista');
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Traitement du formulaire de réservation
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Récupération des données du formulaire
+    $nom = $conn->real_escape_string($_POST['nom']);
+    $email = $conn->real_escape_string($_POST['email']);
+    $telephone = $conn->real_escape_string($_POST['telephone']);
+    $date_reservation = $conn->real_escape_string($_POST['date_reservation']);
+    $heure_reservation = $conn->real_escape_string($_POST['heure_reservation']);
+    $nombre_personnes = intval($_POST['nombre_personnes']);
+    $table_id = intval($_POST['table_id']);
+    $notes = isset($_POST['notes']) ? $conn->real_escape_string($_POST['notes']) : '';
+
+    // Vérifier si le client existe déjà
+    $client_query = "SELECT client_id FROM clients WHERE telephone = '$telephone' LIMIT 1";
+    $client_result = $conn->query($client_query);
+    
+    if ($client_result->num_rows > 0) {
+        // Client existe déjà
+        $client_row = $client_result->fetch_assoc();
+        $client_id = $client_row['client_id'];
+    } else {
+        // Créer un nouveau client
+        $insert_client = "INSERT INTO clients (nom, telephone, adresse) VALUES ('$nom', '$telephone', '')";
+        if ($conn->query($insert_client)) {
+            $client_id = $conn->insert_id;
+        } else {
+            header("Location: reservation1.php?error=" . urlencode("Erreur lors de la création du client: " . $conn->error));
+            exit();
+        }
+    }
+
+    // Insérer la réservation
+    $insert_reservation = "INSERT INTO reservations (
+        client_id, 
+        date_reservation, 
+        heure_reservation, 
+        nombre_personnes, 
+        numero_table, 
+        statut, 
+        notes
+    ) VALUES (
+        $client_id, 
+        '$date_reservation', 
+        '$heure_reservation', 
+        $nombre_personnes, 
+        $table_id, 
+        'confirmée', 
+        '$notes'
+    )";
+
+    if ($conn->query($insert_reservation)) {
+        // Mettre à jour le statut de la table
+        $update_table = "UPDATE tables SET statut = 'réservée' WHERE table_id = $table_id";
+        $conn->query($update_table);
+        
+        // Redirection avec message de succès
+        header("Location: reservation1.php?success=1");
+        exit();
+    } else {
+        header("Location: reservation1.php?error=" . urlencode("Erreur lors de l'enregistrement de la réservation: " . $conn->error));
+        exit();
+    }
+}
+
 // Récupérer les tables disponibles
 $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponible'");
+
+// Vérifier s'il y a une erreur dans la requête
+if ($tables_disponibles === false) {
+    die("Erreur lors de la récupération des tables: " . $conn->error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -148,6 +220,10 @@ $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponi
         .table-image-container {
             height: 200px;
             overflow: hidden;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .table-image {
@@ -228,6 +304,16 @@ $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponi
     </header>
     
     <div class="container">
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> Votre réservation a été enregistrée avec succès!
+            </div>
+        <?php elseif (isset($_GET['error'])): ?>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> Une erreur est survenue: <?= htmlspecialchars($_GET['error']) ?>
+            </div>
+        <?php endif; ?>
+        
         <div class="form-container">
             <h2><i class="fas fa-search"></i> Tables Disponibles</h2>
             
@@ -236,18 +322,23 @@ $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponi
                     <?php while($table = $tables_disponibles->fetch_assoc()): ?>
                         <div class="table-card">
                             <div class="table-image-container">
-                                <?php if ($table['image']): ?>
-                                    <img src="<?= $table['image'] ?>" alt="Table <?= $table['numero'] ?>" class="table-image">
+                                <?php if (!empty($table['image'])): ?>
+                                    <img src="<?= $baseurl . htmlspecialchars($table['image']) ?>" 
+                                         alt="Table <?= htmlspecialchars($table['numero']) ?>" 
+                                         class="table-image"
+                                         onerror="this.src='<?= $baseurl ?>uploads/default.jpg'">
                                 <?php else: ?>
-                                    <img src="https://via.placeholder.com/400x200?text=Table+<?= $table['numero'] ?>" alt="Table <?= $table['numero'] ?>" class="table-image">
+                                    <img src="https://via.placeholder.com/400x200?text=Table+<?= htmlspecialchars($table['numero']) ?>" 
+                                         alt="Table <?= htmlspecialchars($table['numero']) ?>" 
+                                         class="table-image">
                                 <?php endif; ?>
                             </div>
                             <div class="table-info">
-                                <h3>Table <?= $table['numero'] ?></h3>
-                                <span class="table-capacity"><i class="fas fa-users"></i> <?= $table['capacite'] ?> personnes max</span>
+                                <h3>Table <?= htmlspecialchars($table['numero']) ?></h3>
+                                <span class="table-capacity"><i class="fas fa-users"></i> <?= htmlspecialchars($table['capacite']) ?> personnes max</span>
                                 <p><?= htmlspecialchars($table['description']) ?></p>
                                 <p class="table-features"><strong><i class="fas fa-info-circle"></i> Caractéristiques:</strong> <?= htmlspecialchars($table['caracteristiques']) ?></p>
-                                <button class="btn btn-primary" onclick="reserverTable(<?= $table['table_id'] ?>, <?= $table['capacite'] ?>)">
+                                <button class="btn btn-primary" onclick="reserverTable(<?= htmlspecialchars($table['table_id']) ?>, <?= htmlspecialchars($table['capacite']) ?>)">
                                     <i class="fas fa-calendar-check"></i> Réserver
                                 </button>
                             </div>
@@ -266,7 +357,7 @@ $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponi
             <h2><i class="fas fa-edit"></i> Formulaire de Réservation</h2>
             <div id="formErrors" class="alert alert-danger hidden"></div>
             
-            <form id="reservationFormElement" action="traitement_reservation_client.php" method="post">
+            <form id="reservationFormElement" action="reservation1.php" method="post">
                 <input type="hidden" name="table_id" id="reservation_table_id">
                 <input type="hidden" id="table_capacity">
                 
@@ -403,4 +494,6 @@ $tables_disponibles = $conn->query("SELECT * FROM tables WHERE statut = 'disponi
     </script>
 </body>
 </html>
-<?php $conn->close(); ?>
+<?php 
+$conn->close(); 
+?>

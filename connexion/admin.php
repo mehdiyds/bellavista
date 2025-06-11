@@ -6,6 +6,9 @@
     <title>Espace Admin - Gestion des Commandes</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        .show-tables-btn {
+    background-color: #e67e22; /* Orange */
+}
         .action-panel {
             margin-top: 20px;
             display: flex;
@@ -288,7 +291,9 @@
                     <div class="button-group">
                     <a href="gestion_tables.php"><button type="button" class="stat-btn">Gérer les Réservations</button></a>
                 </div>
-                
+                <div class="button-group">
+    <button type="button" id="show-unavailable-tables" class="category-btn">Afficher tables indisponibles</button>
+</div>
                 <div class="button-group">
                     <button type="submit" name="validate_delivery" class="validate-btn">Valider la livraison</button>
                 </div>
@@ -378,6 +383,138 @@
                 }
             });
         });
+        // Gestion des tables indisponibles
+document.getElementById('show-unavailable-tables').addEventListener('click', function() {
+    fetch('get_unavailable_tables.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // Créer une fenêtre modale pour afficher les tables
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            modal.style.zIndex = '1000';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+
+            const modalContent = document.createElement('div');
+            modalContent.style.backgroundColor = 'white';
+            modalContent.style.padding = '20px';
+            modalContent.style.borderRadius = '5px';
+            modalContent.style.maxWidth = '80%';
+            modalContent.style.maxHeight = '80%';
+            modalContent.style.overflow = 'auto';
+
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Fermer';
+            closeBtn.style.marginBottom = '10px';
+            closeBtn.addEventListener('click', () => document.body.removeChild(modal));
+
+            modalContent.appendChild(closeBtn);
+
+            if (data.length === 0) {
+                modalContent.appendChild(document.createTextNode('Aucune table indisponible'));
+            } else {
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                
+                // En-tête du tableau
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                ['ID', 'Numéro', 'Capacité', 'Description', 'Statut', 'Action'].forEach(text => {
+                    const th = document.createElement('th');
+                    th.textContent = text;
+                    th.style.padding = '8px';
+                    th.style.border = '1px solid #ddd';
+                    th.style.textAlign = 'left';
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                // Corps du tableau
+                const tbody = document.createElement('tbody');
+                data.forEach(tableData => {
+                    const row = document.createElement('tr');
+                    
+                    // ID
+                    const idCell = document.createElement('td');
+                    idCell.textContent = tableData.table_id;
+                    row.appendChild(idCell);
+
+                    // Numéro
+                    const numCell = document.createElement('td');
+                    numCell.textContent = tableData.numero;
+                    row.appendChild(numCell);
+
+                    // Capacité
+                    const capCell = document.createElement('td');
+                    capCell.textContent = tableData.capacite;
+                    row.appendChild(capCell);
+
+                    // Description
+                    const descCell = document.createElement('td');
+                    descCell.textContent = tableData.description || '';
+                    row.appendChild(descCell);
+
+                    // Statut
+                    const statutCell = document.createElement('td');
+                    statutCell.textContent = tableData.statut;
+                    row.appendChild(statutCell);
+
+                    // Action
+                    const actionCell = document.createElement('td');
+                    const makeAvailableBtn = document.createElement('button');
+                    makeAvailableBtn.textContent = 'Rendre disponible';
+                    makeAvailableBtn.style.backgroundColor = '#2ecc71';
+                    makeAvailableBtn.style.color = 'white';
+                    makeAvailableBtn.style.border = 'none';
+                    makeAvailableBtn.style.padding = '5px 10px';
+                    makeAvailableBtn.style.borderRadius = '3px';
+                    makeAvailableBtn.style.cursor = 'pointer';
+                    makeAvailableBtn.addEventListener('click', () => {
+                        fetch('make_table_available.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({table_id: tableData.table_id})
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                alert('Table marquée comme disponible');
+                                document.body.removeChild(modal);
+                            } else {
+                                alert('Erreur: ' + result.message);
+                            }
+                        });
+                    });
+                    actionCell.appendChild(makeAvailableBtn);
+                    row.appendChild(actionCell);
+
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+                modalContent.appendChild(table);
+            }
+
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Erreur lors du chargement des tables');
+        });
+});
     </script>
 </body>
 </html>
