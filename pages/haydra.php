@@ -30,7 +30,7 @@
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             text-align: center;
-            padding: 3rem 0;
+            padding: 3rem 0 4rem;
             position: relative;
             overflow: hidden;
         }
@@ -38,6 +38,21 @@
         .header-content {
             position: relative;
             z-index: 2;
+        }
+        
+        .logo-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .dragon-logo {
+            width: 150px;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+            transition: transform 0.5s ease;
+        }
+        
+        .dragon-logo:hover {
+            transform: scale(1.1) rotate(5deg);
         }
         
         header h1 {
@@ -198,13 +213,20 @@
             .team-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .dragon-logo {
+                width: 120px;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <h1>Haydra</h1>
+            <div class="logo-container">
+                <img src="https://imgs.search.brave.com/kmtScHhKfTueHsX96U-QXoTVfbfj6f6vBkrieUJgMPo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzEwLzQ5LzI5LzEw/LzM2MF9GXzEwNDky/OTEwMzNfTHgzdFJS/ZEZjNW1KWDhIUkV0/YXNrcnlRV09vR2JV/bGwuanBn" alt="Logo Haydra - Three-Headed Dragon" class="dragon-logo">
+            </div>
+            <h1>Haydra Bits</h1>
             <p>Une équipe jeune et dynamique de développeurs passionnés par la création de solutions innovantes</p>
         </div>
     </header>
@@ -218,7 +240,7 @@
             <!-- Membre 1 -->
             <div class="team-member">
                 <div class="member-image">
-                    <img src="mtar.jpg" alt="Mtar Rayane">
+                    <img src="https://scontent.ftun15-1.fna.fbcdn.net/v/t39.30808-1/419045455_383050521224902_2783104926074659518_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=110&ccb=1-7&_nc_sid=e99d92&_nc_ohc=voDQzGmTmqAQ7kNvwHlY8C5&_nc_oc=AdllnRHyNe9ySrsziu-YNLZ923A5xQ_JbaxXsVL9cl1MtbpMV-rUF1ZqfruxqvvhGmQ&_nc_zt=24&_nc_ht=scontent.ftun15-1.fna&_nc_gid=FKF9cHBcJPbYPrDuc7Qpjg&oh=00_AfMzAZ_70dN4Mg8lh-jzy4-HrdVTMHEsZck5MllDnAEggw&oe=6864DBEF" alt="Mtar Rayane">
                 </div>
                 <div class="member-info">
                     <h3>Mtar Rayane</h3>
@@ -238,7 +260,7 @@
             <!-- Membre 2 -->
             <div class="team-member">
                 <div class="member-image">
-                    <img src="https://www.facebook.com/photo.php?fbid=586299437428525&set=pb.100081454201358.-2207520000&type=3" alt="Nassim Charaabi">
+                    <img src="https://scontent.ftun15-1.fna.fbcdn.net/v/t39.30808-6/487824234_694161376642330_2274680851797059061_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=gPSnc_nl5EoQ7kNvwHyN8EG&_nc_oc=AdmfKhgj3889ZWTRHuKxkCsGNp_g_Tr-AIaFEnQPIQxcjJrT4E7zD8Jg9GV5Ij1TI9c&_nc_zt=23&_nc_ht=scontent.ftun15-1.fna&_nc_gid=vrAiO5F4y4uSpDFpPjef_w&oh=00_AfMvIaHFW7dDvpKba2N7AYu12IPmGxr5YnEegDNtyR34RQ&oe=6864BD1A" alt="Nassim Charaabi">
                 </div>
                 <div class="member-info">
                     <h3>Nassim Charaabi</h3>
@@ -258,7 +280,7 @@
             <!-- Membre 3 -->
             <div class="team-member">
                 <div class="member-image">
-                    <img src="mehdy.jpg" alt="Mehdi Yedaes">
+                    <img src="https://scontent.ftun15-1.fna.fbcdn.net/v/t39.30808-1/490654903_1379431153244589_1328918101645009794_n.jpg?stp=cp6_dst-jpg_s200x200_tt6&_nc_cat=101&ccb=1-7&_nc_sid=e99d92&_nc_ohc=TD3cEd-sIaAQ7kNvwFMg7Dn&_nc_oc=Adm-M7Vus74b-FBo025ExPyOVdUf3k22i9XiG4YbNbtCZx9vV1uhuZPVLboSlCaKhnA&_nc_zt=24&_nc_ht=scontent.ftun15-1.fna&_nc_gid=kAg_MdehTTevQAbmHA5-bA&oh=00_AfMdvTU1qW93q1ASwHFXZ576D9aJkVbYIhV0xS9AtW2TSw&oe=6864E464" alt="Mehdi Yedaes">
                 </div>
                 <div class="member-info">
                     <h3>Mehdi Yedaes</h3>
