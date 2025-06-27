@@ -6,15 +6,80 @@
     <title>Espace Admin - Gestion des Commandes</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .show-tables-btn {
-    background-color: #e67e22; /* Orange */
-}
-        .action-panel {
-            margin-top: 20px;
+        .toolbar {
             display: flex;
-            gap: 10px;
             flex-wrap: wrap;
+            gap: 10px;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        
+        .toolbar-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            padding: 5px;
+            border-right: 1px solid #ddd;
+        }
+        
+        .toolbar-section:last-child {
+            border-right: none;
+        }
+        
+        .toolbar-section-title {
+            font-weight: bold;
+            margin-right: 5px;
+            color: #333;
+        }
+        
+        button, .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        button:hover, .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .validate-btn {
+            background-color: #e74c3c; /* Rouge */
+        }
+        .stat-btn {
+            background-color: #3498db; /* Bleu */
+        }
+        .sup-btn{
+            background-color: red;
+        }
+        .assign-btn {
+            background-color: #2ecc71; /* Vert */
+        }
+        .add-btn {
+            background-color: #9b59b6; /* Violet */
+        }
+        .category-btn {
+            background-color: #e67e22; /* Orange */
+        }
+        .product-btn {
+            background-color: #1abc9c; /* Turquoise */
+        }
+        
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            min-width: 150px;
+        }
+        
         .commandes-table {
             width: 100%;
             border-collapse: collapse;
@@ -50,61 +115,8 @@
             color: #27ae60;
             font-weight: bold;
         }
-        
-        /* Styles des boutons */
-        button, .btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            color: white;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        button:hover, .btn:hover {
-            opacity: 0.9;
-        }
-        .validate-btn {
-            background-color: #e74c3c; /* Rouge */
-        }
-        .stat-btn {
-            background-color: #3498db; /* Bleu */
-        }
-        .sup-btn{
-            background-color: red;
-        }
-        .assign-btn {
-            background-color: #2ecc71; /* Vert */
-        }
-        .add-btn {
-            background-color: #9b59b6; /* Violet */
-        }
-        .category-btn {
-            background-color: #e67e22; /* Orange */
-        }
-        .product-btn {
-            background-color: #1abc9c; /* Turquoise */
-        }
-        select {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        
-        /* Groupes de boutons */
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-right: 20px;
-            align-items: center;
-        }
-        .button-group:not(:last-child) {
-            border-right: 1px solid #ddd;
-            padding-right: 20px;
-        }
-        .button-group label {
-            font-weight: bold;
-            margin-right: 5px;
+        .admin-btn{
+            background-color: burlywood;
         }
     </style>
 </head>
@@ -233,6 +245,63 @@
         ?>
         
         <form method="post">
+            <div class="toolbar">
+                <!-- Section Gestion des Commandes -->
+                <div class="toolbar-section">
+                    <span class="toolbar-section-title">Commandes:</span>
+                    <select id="livreur-select">
+                        <option value="">-- Sélectionner --</option>
+                        <?php 
+                        $livreurs = $conn->query("SELECT livreur_id, nom, statut FROM livreurs WHERE statut != 'indisponible' ORDER BY nom");
+                        while($livreur = $livreurs->fetch_assoc()): ?>
+                            <option value="<?= $livreur['livreur_id'] ?>">
+                                <?= htmlspecialchars($livreur['nom']) ?> 
+                                (<?= $livreur['statut'] ?>)
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+                    <button type="button" id="assign-btn" class="assign-btn">Assigner</button>
+                    <button type="submit" name="validate_delivery" class="validate-btn">Valider livraison</button>
+                    <a href="ajout_semi_admin.php"><button type="button" class="admin-btn">Ajouter un semi-administrateur</button></a>
+                </div>
+                
+                <!-- Section Livreurs -->
+                <div class="toolbar-section">
+                    <span class="toolbar-section-title">Livreurs:</span>
+                    <a href="liste_livreurs.php"><button type="button" class="stat-btn">Liste</button></a>
+                    <a href="ajout_livreur.php"><button type="button" class="add-btn">Ajouter</button></a>
+                </div>
+                
+                <!-- Section Produits -->
+                <div class="toolbar-section">
+                    <span class="toolbar-section-title">Produits:</span>
+                    <a href="ajout_produit.php"><button type="button" class="product-btn">Ajouter</button></a>
+                    <a href="modifier_produit.php"><button type="button" class="product-btn">Modifier</button></a>
+                    <a href="supprimer_produit.php"><button type="button" class="sup-btn">Supprimer</button></a>
+                </div>
+                
+                <!-- Section Catégories -->
+                <div class="toolbar-section">
+                    <span class="toolbar-section-title">Catégories:</span>
+                    <a href="ajout_cat.php"><button type="button" class="category-btn">Ajouter</button></a>
+                    <a href="modifier_categorie.php"><button type="button" class="category-btn">Modifier</button></a>
+                    <a href="supprimer_categorie.php"><button type="button" class="sup-btn">Supprimer</button></a>
+                </div>
+                
+                <!-- Section Tables/Réservations -->
+                <div class="toolbar-section">
+                    <span class="toolbar-section-title">Tables:</span>
+                    <a href="gestion_tables.php"><button type="button" class="stat-btn">Gérer</button></a>
+                    <button type="button" id="show-unavailable-tables" class="category-btn">Tables indisponibles</button>
+                </div>
+                
+                <!-- Section Statistiques -->
+                <div class="toolbar-section">
+                    <span class="toolbar-section-title">Rapports:</span>
+                    <a href="statistique.php"><button type="button" class="stat-btn">Statistiques</button></a>
+                </div>
+            </div>
+            
             <table class="commandes-table">
                 <thead>
                     <tr>
@@ -271,62 +340,6 @@
                     <?php endif; ?>
                 </tbody>
             </table>
-            
-            <div class="action-panel">
-                <div class="button-group">
-                    <label>Livreur:</label>
-                    <select id="livreur-select">
-    <option value="">-- Sélectionner --</option>
-    <?php 
-    $livreurs = $conn->query("SELECT livreur_id, nom, statut FROM livreurs WHERE statut != 'indisponible' ORDER BY nom");
-    while($livreur = $livreurs->fetch_assoc()): ?>
-        <option value="<?= $livreur['livreur_id'] ?>">
-            <?= htmlspecialchars($livreur['nom']) ?> 
-            (<?= $livreur['statut'] ?>)
-        </option>
-    <?php endwhile; ?>
-</select>
-                    <button type="button" id="assign-btn" class="assign-btn">Assigner</button>
-                </div>
-                    <div class="button-group">
-                    <a href="gestion_tables.php"><button type="button" class="stat-btn">Gérer les Réservations</button></a>
-                </div>
-                <div class="button-group">
-    <button type="button" id="show-unavailable-tables" class="category-btn">Afficher tables indisponibles</button>
-</div>
-                <div class="button-group">
-                    <button type="submit" name="validate_delivery" class="validate-btn">Valider la livraison</button>
-                </div>
-                    <div class="button-group">
-                    <a href="liste_livreurs.php"><button type="button" class="stat-btn">Liste des Livreurs</button></a>
-                </div>
-                <div class="button-group">
-                    <a href="ajout_livreur.php"><button type="button" class="add-btn">Ajouter un livreur</button></a>
-                </div>
-                
-                <div class="button-group">
-                    <a href="ajout_cat.php"><button type="button" class="category-btn">Ajouter une catégorie</button></a>
-                    <a href="ajout_produit.php"><button type="button" class="product-btn">Ajouter un produit</button></a>
-                </div>
-                
-                <div class="button-group">
-                    <a href="statistique.php"><button type="button" class="stat-btn">Statistiques</button></a>
-                </div>
-
-                <div class="button-group">
-                <a href="supprimer_categorie.php"><button type="button" class="sup-btn">Supprimer une catégorie</button></a>
-                </div>
-
-               <div class="button-group">
-                <a href="supprimer_produit.php"><button type="button" class="sup-btn">Supprimer un produit</button></a>
-               </div>
-               <div class="button-group">
-                    <a href="modifier_produit.php"><button type="button" class="product-btn">Modifier un produit</button></a>
-                </div>
-                <div class="button-group">
-                    <a href="modifier_categorie.php"><button type="button" class="product-btn">Modifier une categorie</button></a>
-                </div>
-            </div>
         </form>
         
         <?php
@@ -381,139 +394,140 @@
                     }
                 }
             });
-        });
-        // Gestion des tables indisponibles
-document.getElementById('show-unavailable-tables').addEventListener('click', function() {
-    fetch('get_unavailable_tables.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
+            
+            // Gestion des tables indisponibles
+            document.getElementById('show-unavailable-tables').addEventListener('click', function() {
+                fetch('get_unavailable_tables.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                            return;
+                        }
 
-            // Créer une fenêtre modale pour afficher les tables
-            const modal = document.createElement('div');
-            modal.style.position = 'fixed';
-            modal.style.top = '0';
-            modal.style.left = '0';
-            modal.style.width = '100%';
-            modal.style.height = '100%';
-            modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
-            modal.style.zIndex = '1000';
-            modal.style.display = 'flex';
-            modal.style.justifyContent = 'center';
-            modal.style.alignItems = 'center';
+                        // Créer une fenêtre modale pour afficher les tables
+                        const modal = document.createElement('div');
+                        modal.style.position = 'fixed';
+                        modal.style.top = '0';
+                        modal.style.left = '0';
+                        modal.style.width = '100%';
+                        modal.style.height = '100%';
+                        modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                        modal.style.zIndex = '1000';
+                        modal.style.display = 'flex';
+                        modal.style.justifyContent = 'center';
+                        modal.style.alignItems = 'center';
 
-            const modalContent = document.createElement('div');
-            modalContent.style.backgroundColor = 'white';
-            modalContent.style.padding = '20px';
-            modalContent.style.borderRadius = '5px';
-            modalContent.style.maxWidth = '80%';
-            modalContent.style.maxHeight = '80%';
-            modalContent.style.overflow = 'auto';
+                        const modalContent = document.createElement('div');
+                        modalContent.style.backgroundColor = 'white';
+                        modalContent.style.padding = '20px';
+                        modalContent.style.borderRadius = '5px';
+                        modalContent.style.maxWidth = '80%';
+                        modalContent.style.maxHeight = '80%';
+                        modalContent.style.overflow = 'auto';
 
-            const closeBtn = document.createElement('button');
-            closeBtn.textContent = 'Fermer';
-            closeBtn.style.marginBottom = '10px';
-            closeBtn.addEventListener('click', () => document.body.removeChild(modal));
+                        const closeBtn = document.createElement('button');
+                        closeBtn.textContent = 'Fermer';
+                        closeBtn.style.marginBottom = '10px';
+                        closeBtn.addEventListener('click', () => document.body.removeChild(modal));
 
-            modalContent.appendChild(closeBtn);
+                        modalContent.appendChild(closeBtn);
 
-            if (data.length === 0) {
-                modalContent.appendChild(document.createTextNode('Aucune table indisponible'));
-            } else {
-                const table = document.createElement('table');
-                table.style.width = '100%';
-                table.style.borderCollapse = 'collapse';
-                
-                // En-tête du tableau
-                const thead = document.createElement('thead');
-                const headerRow = document.createElement('tr');
-                ['ID', 'Numéro', 'Capacité', 'Description', 'Statut', 'Action'].forEach(text => {
-                    const th = document.createElement('th');
-                    th.textContent = text;
-                    th.style.padding = '8px';
-                    th.style.border = '1px solid #ddd';
-                    th.style.textAlign = 'left';
-                    headerRow.appendChild(th);
-                });
-                thead.appendChild(headerRow);
-                table.appendChild(thead);
+                        if (data.length === 0) {
+                            modalContent.appendChild(document.createTextNode('Aucune table indisponible'));
+                        } else {
+                            const table = document.createElement('table');
+                            table.style.width = '100%';
+                            table.style.borderCollapse = 'collapse';
+                            
+                            // En-tête du tableau
+                            const thead = document.createElement('thead');
+                            const headerRow = document.createElement('tr');
+                            ['ID', 'Numéro', 'Capacité', 'Description', 'Statut', 'Action'].forEach(text => {
+                                const th = document.createElement('th');
+                                th.textContent = text;
+                                th.style.padding = '8px';
+                                th.style.border = '1px solid #ddd';
+                                th.style.textAlign = 'left';
+                                headerRow.appendChild(th);
+                            });
+                            thead.appendChild(headerRow);
+                            table.appendChild(thead);
 
-                // Corps du tableau
-                const tbody = document.createElement('tbody');
-                data.forEach(tableData => {
-                    const row = document.createElement('tr');
-                    
-                    // ID
-                    const idCell = document.createElement('td');
-                    idCell.textContent = tableData.table_id;
-                    row.appendChild(idCell);
+                            // Corps du tableau
+                            const tbody = document.createElement('tbody');
+                            data.forEach(tableData => {
+                                const row = document.createElement('tr');
+                                
+                                // ID
+                                const idCell = document.createElement('td');
+                                idCell.textContent = tableData.table_id;
+                                row.appendChild(idCell);
 
-                    // Numéro
-                    const numCell = document.createElement('td');
-                    numCell.textContent = tableData.numero;
-                    row.appendChild(numCell);
+                                // Numéro
+                                const numCell = document.createElement('td');
+                                numCell.textContent = tableData.numero;
+                                row.appendChild(numCell);
 
-                    // Capacité
-                    const capCell = document.createElement('td');
-                    capCell.textContent = tableData.capacite;
-                    row.appendChild(capCell);
+                                // Capacité
+                                const capCell = document.createElement('td');
+                                capCell.textContent = tableData.capacite;
+                                row.appendChild(capCell);
 
-                    // Description
-                    const descCell = document.createElement('td');
-                    descCell.textContent = tableData.description || '';
-                    row.appendChild(descCell);
+                                // Description
+                                const descCell = document.createElement('td');
+                                descCell.textContent = tableData.description || '';
+                                row.appendChild(descCell);
 
-                    // Statut
-                    const statutCell = document.createElement('td');
-                    statutCell.textContent = tableData.statut;
-                    row.appendChild(statutCell);
+                                // Statut
+                                const statutCell = document.createElement('td');
+                                statutCell.textContent = tableData.statut;
+                                row.appendChild(statutCell);
 
-                    // Action
-                    const actionCell = document.createElement('td');
-                    const makeAvailableBtn = document.createElement('button');
-                    makeAvailableBtn.textContent = 'Rendre disponible';
-                    makeAvailableBtn.style.backgroundColor = '#2ecc71';
-                    makeAvailableBtn.style.color = 'white';
-                    makeAvailableBtn.style.border = 'none';
-                    makeAvailableBtn.style.padding = '5px 10px';
-                    makeAvailableBtn.style.borderRadius = '3px';
-                    makeAvailableBtn.style.cursor = 'pointer';
-                    makeAvailableBtn.addEventListener('click', () => {
-                        fetch('make_table_available.php', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({table_id: tableData.table_id})
-                        })
-                        .then(response => response.json())
-                        .then(result => {
-                            if (result.success) {
-                                alert('Table marquée comme disponible');
-                                document.body.removeChild(modal);
-                            } else {
-                                alert('Erreur: ' + result.message);
-                            }
-                        });
+                                // Action
+                                const actionCell = document.createElement('td');
+                                const makeAvailableBtn = document.createElement('button');
+                                makeAvailableBtn.textContent = 'Rendre disponible';
+                                makeAvailableBtn.style.backgroundColor = '#2ecc71';
+                                makeAvailableBtn.style.color = 'white';
+                                makeAvailableBtn.style.border = 'none';
+                                makeAvailableBtn.style.padding = '5px 10px';
+                                makeAvailableBtn.style.borderRadius = '3px';
+                                makeAvailableBtn.style.cursor = 'pointer';
+                                makeAvailableBtn.addEventListener('click', () => {
+                                    fetch('make_table_available.php', {
+                                        method: 'POST',
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify({table_id: tableData.table_id})
+                                    })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.success) {
+                                            alert('Table marquée comme disponible');
+                                            document.body.removeChild(modal);
+                                        } else {
+                                            alert('Erreur: ' + result.message);
+                                        }
+                                    });
+                                });
+                                actionCell.appendChild(makeAvailableBtn);
+                                row.appendChild(actionCell);
+
+                                tbody.appendChild(row);
+                            });
+                            table.appendChild(tbody);
+                            modalContent.appendChild(table);
+                        }
+
+                        modal.appendChild(modalContent);
+                        document.body.appendChild(modal);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert('Erreur lors du chargement des tables');
                     });
-                    actionCell.appendChild(makeAvailableBtn);
-                    row.appendChild(actionCell);
-
-                    tbody.appendChild(row);
-                });
-                table.appendChild(tbody);
-                modalContent.appendChild(table);
-            }
-
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-        })
-        .catch(error => {
-            console.error(error);
-            alert('Erreur lors du chargement des tables');
+            });
         });
-});
     </script>
 </body>
 </html>
