@@ -20,7 +20,7 @@ $base_url = "http://".$_SERVER['HTTP_HOST']."/bellavista/";
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <h3>Adresse exacte</h3>
-                    <p>Bella Vista Korba<br>HVG7+CH Korba<br>Nabeul, Tunisie</p>
+                    <p>Bella Vista Korba<br>Nabeul, Tunisie</p>
                     <p class="map-code">Code Google Maps: HVG7+CH Korba</p>
                 </div>
 

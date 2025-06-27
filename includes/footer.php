@@ -49,7 +49,7 @@
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; <?php echo date("Y"); ?> Bella Vista Café Restaurant. Tous droits réservés.</p>
+            <p>&copy; <?php echo date("Y"); ?> Bella Vista Café Restaurant. Tous droits réservés.<br>this website created by  <a href="haydra.php"> haydra bits</a></p>
         </div>
     </div>
 </footer>
