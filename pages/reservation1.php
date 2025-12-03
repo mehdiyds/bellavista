@@ -1,7 +1,9 @@
+<?php 
+include 'C:\xampp\htdocs\bellavista\includes\header.php'; 
+?>
 <?php
 // Configuration de la base URL
-$baseurl = 'http://' . $_SERVER['HTTP_HOST'] . '/';
-
+$baseurl = 'http://' . $_SERVER['HTTP_HOST'] . '/bellavista/connexion/';
 // Connexion à la base de données
 $conn = new mysqli('localhost', 'root', '', 'bellavista');
 if ($conn->connect_error) {
@@ -89,38 +91,6 @@ if ($tables_disponibles === false) {
     <title>Réservation de Table - Bella Vista</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #8e44ad;
-            --secondary-color: #3498db;
-            --danger-color: #e74c3c;
-            --success-color: #2ecc71;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
         
         h1, h2, h3 {
             margin-top: 0;
@@ -132,6 +102,7 @@ if ($tables_disponibles === false) {
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             padding: 30px;
             margin-bottom: 30px;
+            margin-top: 30px;
         }
         
         .form-group {
@@ -160,42 +131,6 @@ if ($tables_disponibles === false) {
             box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.2);
         }
         
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #7d3c98;
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #2980b9;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
         
         .tables-grid {
             display: grid;
@@ -256,25 +191,6 @@ if ($tables_disponibles === false) {
             margin-bottom: 15px;
         }
         
-        .alert {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        
-        .alert-danger {
-            background-color: #f8d7da;
-            color: var(--danger-color);
-            border: 1px solid #f5c6cb;
-        }
-        
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
         .hidden {
             display: none;
         }
@@ -297,11 +213,6 @@ if ($tables_disponibles === false) {
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1><i class="fas fa-utensils"></i> Réservation de Table - Bella Vista</h1>
-        </div>
-    </header>
     
     <div class="container">
         <?php if (isset($_GET['success'])): ?>
@@ -322,17 +233,17 @@ if ($tables_disponibles === false) {
                     <?php while($table = $tables_disponibles->fetch_assoc()): ?>
                         <div class="table-card">
                             <div class="table-image-container">
-                                <?php if (!empty($table['image'])): ?>
-                                    <img src="<?= $baseurl . htmlspecialchars($table['image']) ?>" 
-                                         alt="Table <?= htmlspecialchars($table['numero']) ?>" 
-                                         class="table-image"
-                                         onerror="this.src='<?= $baseurl ?>uploads/default.jpg'">
-                                <?php else: ?>
-                                    <img src="https://via.placeholder.com/400x200?text=Table+<?= htmlspecialchars($table['numero']) ?>" 
-                                         alt="Table <?= htmlspecialchars($table['numero']) ?>" 
-                                         class="table-image">
-                                <?php endif; ?>
-                            </div>
+    <?php if (!empty($table['image'])): ?>
+        <img src="<?= $baseurl .  htmlspecialchars($table['image']) ?>" 
+             alt="Table <?= htmlspecialchars($table['numero']) ?>" 
+             class="table-image"
+             onerror="this.src='<?= $baseurl ?>uploads/default.jpg'">
+    <?php else: ?>
+        <img src="<?= $baseurl ?>uploads/default.jpg" 
+             alt="Table <?= htmlspecialchars($table['numero']) ?>" 
+             class="table-image">
+    <?php endif; ?>
+</div>
                             <div class="table-info">
                                 <h3>Table <?= htmlspecialchars($table['numero']) ?></h3>
                                 <span class="table-capacity"><i class="fas fa-users"></i> <?= htmlspecialchars($table['capacite']) ?> personnes max</span>
@@ -494,6 +405,4 @@ if ($tables_disponibles === false) {
     </script>
 </body>
 </html>
-<?php 
-$conn->close(); 
-?>
+<?php include 'C:\xampp\htdocs\bellavista\includes\footer.php'; ?>

@@ -3,7 +3,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Bella Vista</h3>
-                <p>Experience the perfect blend of exceptional coffee, delicious food, and warm hospitality.</p>
+                <p>Découvrez le mélange parfait d'un café exceptionnel, une délicieuse cuisine et une hospitalité chaleureuse.</p>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-instagram"></i></a>
@@ -12,11 +12,11 @@
             </div>
             
             <div class="footer-section">
-                <h3>Contact Us</h3>
+                <h3>Contactez-nous</h3>
                 <div class="contact-info">
                     <div class="contact-item">
                         <i class="fas fa-map-marker-alt"></i>
-                        <span>123 Coffee Street, Brew District</span>
+                        <span>123 Rue du Café, Quartier Brew</span>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-phone"></i>
@@ -30,26 +30,26 @@
             </div>
             
             <div class="footer-section">
-                <h3>Opening Hours</h3>
+                <h3>Heures d'ouverture</h3>
                 <div class="contact-info">
                     <div class="contact-item">
                         <i class="fas fa-clock"></i>
-                        <span>Mon-Fri: 7:00 AM - 9:00 PM</span>
+                        <span>Lun-Ven : 7h00 - 21h00</span>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-clock"></i>
-                        <span>Sat: 8:00 AM - 10:00 PM</span>
+                        <span>Sam : 8h00 - 22h00</span>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-clock"></i>
-                        <span>Sun: 8:00 AM - 8:00 PM</span>
+                        <span>Dim : 8h00 - 20h00</span>
                     </div>
                 </div>
             </div>
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; <?php echo date("Y"); ?> Bella Vista Coffee Restaurant. All rights reserved.</p>
+            <p>&copy; <?php echo date("Y"); ?> Bella Vista Café Restaurant. Tous droits réservés.<br>this website created by  <a href="haydra.php"> haydra bits</a></p>
         </div>
     </div>
 </footer>
